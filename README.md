@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://i.imgur.com/euJ17vA.png" alt="Mount Spy logo" style="border: none;" />
+</p>
+
 # MountSpy
 Mount Spy is an add-on for World of Warcraft that tells you what mount a player character is riding, and how to get it.
 
