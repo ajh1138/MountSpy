@@ -1,0 +1,12 @@
+## Interface: 80205
+## Title: Mount Spy
+## Author: ajh1138
+## Version: 8.2.5-02
+## Notes: "Tells you what mount a player is riding and where to get it."
+## X-Category: Miscellaneous
+## X-Website: https://www.curseforge.com/wow/addons/mountspy
+## X-Curse-Project-ID: 102325
+## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode
+MountSpy.lua
+MountSpyData.lua
+MountSpy.xml
