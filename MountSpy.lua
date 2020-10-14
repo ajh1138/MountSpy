@@ -3,11 +3,10 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "8.2.5-03";
+local MOUNTSPY_VERSION = "9.0.0-01";
 
 
 local legionMountIds = {};
-local LegionMountTable = {};  -- TODO: REMOVE THIS
 
 function MountSpy_LoadMountIdList()
 	legionMountIds = C_MountJournal.GetMountIDs();
@@ -359,6 +358,31 @@ function MountSpy_CheckForNonMountBuffs(targetMountData)
 	end	
 end
 
+function MountSpy_StringSearch(msg)
+	local searchString = string.gsub(msg, "?", "");
+	searchString = strtrim(searchString);
+	mountspydebug("." .. searchString .. ".");
+
+	local resultsWereFound = false;
+	local searchResults = {};
+
+	for i,v in ipairs(legionMountIds) do
+		local thisMountId = tonumber(legionMountIds[i]);
+		local creatureName, blehSpellId, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, blorp = C_MountJournal.GetMountInfoByID(thisMountId);
+		local thisTest = { mountId = thisMountId, creatureName = creatureName, collected = isCollected, index = i, spellId = blehSpellId };
+
+		if string.find(string.lower(thisTest.creatureName), string.lower(searchString)) ~= nil then
+			resultsWereFound = true;
+			local chatLink = MountSpy_MakeMountChatLink(thisTest);
+			MountSpyPrint("result:", chatLink);
+		end
+	end
+
+	if resultsWereFound == false then
+		MountSpyPrint("No results found.");
+	end
+end
+
 function MountSpy_ToggleUI(msg, editbox)
 	local isShown = MountSpy_MainFrame:IsShown();
 
@@ -450,6 +474,8 @@ function MountSpy_ReceiveCommand(msg)
 		MountSpy_CheckAndShowTargetMountInfo();
 	elseif msg == "match" then
 		MountSpy_MatchMountButtonClick();
+	elseif msg == "version" then
+		MountSpyPrint("version", MOUNTSPY_VERSION);
 	elseif msg == "debug" then
 
 		local debugStatus = "off";
@@ -463,6 +489,8 @@ function MountSpy_ReceiveCommand(msg)
 		end
 
 		print("MountSpy debugging is now " .. debugStatus .. ".");
+	elseif string.find(msg, "?") > 0 then
+		MountSpy_StringSearch(msg);
 	end
 end
 

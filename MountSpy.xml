@@ -23,7 +23,6 @@
 			</OnHide>
 			<OnLoad>
 				self:RegisterForDrag("LeftButton");
-				<!--self:RegisterEvent("UPDATE_MOUSEOVER_UNIT");-->
 				self:RegisterEvent("ADDON_LOADED");
 				MountSpy_OnLoad();
 			</OnLoad>
@@ -35,23 +34,15 @@
 			<OnDragStop>
 				self:StopMovingOrSizing();
 			</OnDragStop>
-			<!--<OnEvent event="UPDATE_MOUSEOVER_UNIT" function="MountSpy_OnMouseoverUnit" />-->
 			<OnEvent event="ADDON_LOADED" function="MountSpy_OnAddonLoaded" />
-			<!--  -->
 		</Scripts>
 
 
 		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
 			 tile="true">
-			<!--<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>-->
 			<TileSize>
 				<AbsValue val="32"/>
 			</TileSize>
-			<!--<EdgeSize>
-				<AbsValue val="32"/> edgeFile="Interface\DialogFrame\UI-DialogBox-Border"
-			</EdgeSize>-->
 		</Backdrop>
 
 		<Layers>
