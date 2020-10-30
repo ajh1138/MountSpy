@@ -397,10 +397,12 @@ end
 
 function MountSpy_ShowUI(msg, editbox)
 	MountSpy_MainFrame:Show();
+	MountSpyHidden = false;
 end
 
 function MountSpy_HideUI(msg, editbox)
 	MountSpy_MainFrame:Hide();
+	MountSpyHidden = true;
 end
 
 function MountSpy_Init()
