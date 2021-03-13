@@ -6,7 +6,7 @@
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
 ## X-Curse-Project-ID: 102325
-## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode
+## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode, MountSpySuppressLoadingMessages
 MountSpy.lua
 MountSpyData.lua
 MountSpy.xml

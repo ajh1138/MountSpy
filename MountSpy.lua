@@ -5,9 +5,9 @@ local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
 local MOUNTSPY_VERSION = "9.0.5-01";
 
--- if a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
+-- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
--- this happens mostly in battlegrounds. 
+-- This happens mostly in battlegrounds. 
 local TARGETED_PLAYER_SPELL_LIMIT = 15; 
 
 local legionMountIds = {};
@@ -63,6 +63,24 @@ function MountSpy_ActiveModeCheckButtonClick()
 	if MountSpyAutomaticMode then
 		MountSpy_ValidateAndTell();
 	end
+end
+
+function MountSpy_GetTargetBuffCount()
+	local buffCount = 0;
+
+	while true do
+		
+		local spellName = UnitBuff("target", buffCount + 1);
+		
+		if not spellName then
+			break;
+		else 
+			buffCount = buffCount + 1;
+		end 
+
+	end
+
+	return buffCount;
 end
 
 function MountSpy_ValidateAndTell()
@@ -179,14 +197,18 @@ function MountSpy_GetTargetMountData()
 		return nil;
 	end
 
+	local buffCount = MountSpy_GetTargetBuffCount();
+	if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
+		print(MountSpyPrintPrefix, "Target has too many active spells.");
+		return nil;
+	end
+
 	-- iterate through target's buffs to see if any of them are mounts.
 	local spellIterator = 1;
-
+	
 	while true do
 		
-		local spellName,spellIcon,spellCount,dispellType,spellDuration,spellExpires,spellCaster,
-			spellIsStealable,spellNameplateShowPersonal,spellId,canApplyAura,isBossDebuff,nameplateShowAll,
-			timeMod, value1, value2, value3=UnitBuff("target",spellIterator);
+		local spellName,_,_,_,_,_,_,_,_,spellId = UnitBuff("target",spellIterator);
 
 		-- mountspydebug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
 		
@@ -410,7 +432,9 @@ function MountSpy_HideUI(msg, editbox)
 end
 
 function MountSpy_Init()
-	MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
+	if not MountSpySuppressLoadingMessages then
+		MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
+	end
 
 	mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden );
 
@@ -462,7 +486,7 @@ end
 function MountSpy_PrintCurrentStatus()
 	local statusMsg = "";
 
-	if MountSpyHidden == true then
+	if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
 		statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
 		print(MountSpyPrintPrefix, statusMsg);
 	end
@@ -495,6 +519,14 @@ function MountSpy_ReceiveCommand(msg)
 		end
 
 		print("MountSpy debugging is now " .. debugStatus .. ".");
+	elseif msg == "quiet" then
+		if not MountSpySuppressLoadingMessages then
+			MountSpySuppressLoadingMessages = true;
+			print(MountSpyPrintPrefix, "Startup messages disabled.");
+		else
+			MountSpySuppressLoadingMessages = false;
+			print(MountSpyPrintPrefix, "Startup messages enabled.");
+		end	
 	elseif string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
 	end
