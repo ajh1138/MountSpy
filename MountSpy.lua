@@ -3,8 +3,12 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "9.0.0-01";
+local MOUNTSPY_VERSION = "9.0.5-01";
 
+-- if a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
+-- abort the mount check because the loop will be really slow.
+-- this happens mostly in battlegrounds. 
+local TARGETED_PLAYER_SPELL_LIMIT = 15; 
 
 local legionMountIds = {};
 
