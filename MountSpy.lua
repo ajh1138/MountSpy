@@ -8,7 +8,7 @@ local MOUNTSPY_VERSION = "9.0.5-01";
 -- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
 -- This happens mostly in battlegrounds. 
-local TARGETED_PLAYER_SPELL_LIMIT = 15; 
+local TARGETED_PLAYER_SPELL_LIMIT = 20; 
 
 local legionMountIds = {};
 
