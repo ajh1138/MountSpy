@@ -1,7 +1,7 @@
-## Interface: 90100
+## Interface: 90105
 ## Title: Mount Spy
 ## Author: ajh1138
-## Version: 9.1.0-01
+## Version: 9.1.5-01
 ## Notes: "Tells you what mount a player is riding and where to get it."
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
