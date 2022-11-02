@@ -493,6 +493,20 @@ function MountSpy_PrintCurrentStatus()
 
 end
 
+function MountSpy_SayVariables()
+	MountSpyPrint("MountSpyHidden:", MountSpyHidden, "MountSpyDebugMode:", MountSpyDebugMode, "MountSpyAutomaticMode:", MountSpyAutomaticMode);
+end
+
+function MountSpy_ShowHelp()
+	MountSpyPrint("commands:\n",
+		"show - Shows the UI\n",
+	 	"hide - Hides the UI\n",
+		"getinfo - Gets info about the targeted player's mount\n",
+		"match - Attempts to put you on a mount that matches the target's mount\n",
+		"quiet - Toggles the messages displayed at login\n"
+	);
+end
+
 function MountSpy_ReceiveCommand(msg) 
 	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebug);
 
@@ -500,17 +514,20 @@ function MountSpy_ReceiveCommand(msg)
 		MountSpy_ShowUI();
 	elseif msg == "hide" then
 		MountSpy_HideUI();
+	elseif msg == "help" then
+		MountSpy_ShowHelp();
 	elseif msg == "getinfo" then
 		MountSpy_CheckAndShowTargetMountInfo();
 	elseif msg == "match" then
 		MountSpy_MatchMountButtonClick();
 	elseif msg == "version" then
 		MountSpyPrint("version", MOUNTSPY_VERSION);
+	elseif msg == "vars" then
+		MountSpy_SayVariables();
 	elseif msg == "debug" then
 
 		local debugStatus = "off";
 
-		-- sode note: lua needs a real ternary operator.
 		if not MountSpyDebugMode then
 			MountSpyDebugMode = true;
 			debugStatus = "on";
@@ -533,16 +550,23 @@ function MountSpy_ReceiveCommand(msg)
 end
 
 -- startup events --
-function MountSpy_OnLoad()
---	mountspydebug("OnLoad has fired.");
+function MountSpy_OnEvent(self, eventName, ...)
+	local arg1 = ...;
+	mountspydebug("event happened: ", arg1, eventName );
+
+	if eventName == "PLAYER_TARGET_CHANGED" then
+		MountSpy_OnPlayerTargetChanged();
+	end
+
+	if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
+		MountSpy_Init();
+		self:RegisterEvent("PLAYER_TARGET_CHANGED");
+	end
 end
 
-function MountSpy_OnAddonLoaded(msg, arg1, arg2, ...)
-	if arg2 == "MountSpy" then
-	--	mountspydebug("OnAddonLoaded has fired.");
-		
-		MountSpy_Init();
-	end
+
+function MountSpy_OnLoad(frame)
+--	mountspydebug("OnLoad has fired.");
 end
 
 function MountSpy_OnHide()
