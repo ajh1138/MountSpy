@@ -3,7 +3,7 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "10.00.00-01";
+local MOUNTSPY_VERSION = "10.00.00-02";
 
 -- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
@@ -110,17 +110,18 @@ function MountSpy_MakeTargetLinkString()
 	return targetLinkString;
 end
 
-function MountSpy_TellTargetMountInfo(targetName, targetMountData)
-	local targetLinkString = MountSpy_MakeTargetLinkString();
-
+function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
 	if not targetName then
 		print(MountSpyPrintPrefix,"Error - No target.");
-		return;
+		return "";
 	end
+	
+	local targetLinkString = MountSpy_MakeTargetLinkString();
+	local resultString = "";
 
 	if targetMountData ~= nil and targetMountData.spellId ~= NOT_REALLY_A_MOUNT_SPELLID then
 		local mountLinkString = MountSpy_MakeMountChatLink(targetMountData);
-		local resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
+		resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
 		local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
 
 		-- override some stuff if target is the player...
@@ -143,15 +144,26 @@ function MountSpy_TellTargetMountInfo(targetName, targetMountData)
 
 		print(MountSpyPrintPrefix,resultString);
 	else
-		if (targetMountData ~= null) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
+		if (targetMountData ~= nil) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
 			local creatureName = targetMountData.creatureName;
 
 			if MountSpy_IsThisADruidForm(creatureName) then
-				print(MountSpyPrintPrefix, targetLinkString, "is in", creatureName .. ".");
+				resultString = targetLinkString .. "is in" .. creatureName .. ".";
 			elseif creatureName == "Tarecgosa's Visage" then
-				print(MountSpyPrintPrefix, targetLinkString, " is transformed into", creatureName);
+				resultString = targetLinkString .. " is transformed into" .. creatureName;
 			end
 		end
+	end
+
+	return resultString;
+end
+
+function MountSpy_TellTargetMountInfo(targetName, targetMountData)
+	local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName, targetMountData);
+
+	if not mountInfoToPrint == "" then
+		MountSpyPrint(mountInfoToPrint);
+		MountSpy_AddToHistory(mountInfoToPrint);
 	end
 end
 
@@ -508,10 +520,14 @@ function MountSpy_ShowHelp()
 end
 
 function MountSpy_ReceiveCommand(msg) 
-	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebug);
+	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebugMode);
 
 	if msg == nil or msg == "" or msg == "show" then
 		MountSpy_ShowUI();
+	elseif msg == "history" or msg == "hist" then
+		MountSpy_ShowHistory();
+	elseif msg == "clearhistory" or msg == "clrhist" then
+		MountSpy_ClearHistory();
 	elseif msg == "hide" then
 		MountSpy_HideUI();
 	elseif msg == "help" then
