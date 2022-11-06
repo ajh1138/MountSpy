@@ -3,8 +3,12 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "9.0.0-01";
+local MOUNTSPY_VERSION = "10.00.00-02";
 
+-- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
+-- abort the mount check because the loop will be really slow.
+-- This happens mostly in battlegrounds. 
+local TARGETED_PLAYER_SPELL_LIMIT = 20;
 
 local legionMountIds = {};
 
@@ -61,6 +65,24 @@ function MountSpy_ActiveModeCheckButtonClick()
 	end
 end
 
+function MountSpy_GetTargetBuffCount()
+	local buffCount = 0;
+
+	while true do
+		
+		local spellName = UnitBuff("target", buffCount + 1);
+		
+		if not spellName then
+			break;
+		else 
+			buffCount = buffCount + 1;
+		end 
+
+	end
+
+	return buffCount;
+end
+
 function MountSpy_ValidateAndTell()
 	local isValidTarget = MountSpy_CheckForValidTarget();
 
@@ -88,17 +110,19 @@ function MountSpy_MakeTargetLinkString()
 	return targetLinkString;
 end
 
-function MountSpy_TellTargetMountInfo(targetName, targetMountData)
-	local targetLinkString = MountSpy_MakeTargetLinkString();
-
+function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
+	mountspydebug("building mount info to print.")
 	if not targetName then
 		print(MountSpyPrintPrefix,"Error - No target.");
-		return;
+		return "";
 	end
+	
+	local targetLinkString = MountSpy_MakeTargetLinkString();
+	local resultString = "";
 
 	if targetMountData ~= nil and targetMountData.spellId ~= NOT_REALLY_A_MOUNT_SPELLID then
 		local mountLinkString = MountSpy_MakeMountChatLink(targetMountData);
-		local resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
+		resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
 		local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
 
 		-- override some stuff if target is the player...
@@ -118,18 +142,27 @@ function MountSpy_TellTargetMountInfo(targetName, targetMountData)
 				resultString = resultString .. "|cffFFCCCC Your character does not have this mount.|h|r";
 			end
 		end
-
-		print(MountSpyPrintPrefix,resultString);
 	else
-		if (targetMountData ~= null) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
+		if (targetMountData ~= nil) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
 			local creatureName = targetMountData.creatureName;
 
 			if MountSpy_IsThisADruidForm(creatureName) then
-				print(MountSpyPrintPrefix, targetLinkString, "is in", creatureName .. ".");
+				resultString = targetLinkString .. "is in" .. creatureName .. ".";
 			elseif creatureName == "Tarecgosa's Visage" then
-				print(MountSpyPrintPrefix, targetLinkString, " is transformed into", creatureName);
+				resultString = targetLinkString .. " is transformed into" .. creatureName;
 			end
 		end
+	end
+
+	return resultString;
+end
+
+function MountSpy_TellTargetMountInfo(targetName, targetMountData)
+	local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName, targetMountData);
+
+	if mountInfoToPrint ~= '' then
+		MountSpyPrint(mountInfoToPrint);
+		MountSpy_AddToHistory(mountInfoToPrint);
 	end
 end
 
@@ -175,14 +208,18 @@ function MountSpy_GetTargetMountData()
 		return nil;
 	end
 
+	local buffCount = MountSpy_GetTargetBuffCount();
+	if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
+		print(MountSpyPrintPrefix, "Target has too many active spells.");
+		return nil;
+	end
+
 	-- iterate through target's buffs to see if any of them are mounts.
 	local spellIterator = 1;
-
+	
 	while true do
 		
-		local spellName,spellIcon,spellCount,dispellType,spellDuration,spellExpires,spellCaster,
-			spellIsStealable,spellNameplateShowPersonal,spellId,canApplyAura,isBossDebuff,nameplateShowAll,
-			timeMod, value1, value2, value3=UnitBuff("target",spellIterator);
+		local spellName,_,_,_,_,_,_,_,_,spellId = UnitBuff("target",spellIterator);
 
 		-- mountspydebug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
 		
@@ -406,7 +443,9 @@ function MountSpy_HideUI(msg, editbox)
 end
 
 function MountSpy_Init()
-	MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
+	if not MountSpySuppressLoadingMessages then
+		MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
+	end
 
 	mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden );
 
@@ -458,31 +497,52 @@ end
 function MountSpy_PrintCurrentStatus()
 	local statusMsg = "";
 
-	if MountSpyHidden == true then
+	if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
 		statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
 		print(MountSpyPrintPrefix, statusMsg);
 	end
 
 end
 
+function MountSpy_SayVariables()
+	MountSpyPrint("MountSpyHidden:", MountSpyHidden, "MountSpyDebugMode:", MountSpyDebugMode, "MountSpyAutomaticMode:", MountSpyAutomaticMode);
+end
+
+function MountSpy_ShowHelp()
+	MountSpyPrint("commands:\n",
+		"show - Shows the UI\n",
+	 	"hide - Hides the UI\n",
+		"getinfo - Gets info about the targeted player's mount\n",
+		"match - Attempts to put you on a mount that matches the target's mount\n",
+		"quiet - Toggles the messages displayed at login\n"
+	);
+end
+
 function MountSpy_ReceiveCommand(msg) 
-	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebug);
+	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebugMode);
 
 	if msg == nil or msg == "" or msg == "show" then
 		MountSpy_ShowUI();
+	elseif msg == "history" or msg == "hist" then
+		MountSpy_ShowHistory();
+	elseif msg == "clearhistory" or msg == "clrhist" then
+		MountSpy_ClearHistory();
 	elseif msg == "hide" then
 		MountSpy_HideUI();
+	elseif msg == "help" then
+		MountSpy_ShowHelp();
 	elseif msg == "getinfo" then
 		MountSpy_CheckAndShowTargetMountInfo();
 	elseif msg == "match" then
 		MountSpy_MatchMountButtonClick();
 	elseif msg == "version" then
 		MountSpyPrint("version", MOUNTSPY_VERSION);
+	elseif msg == "vars" then
+		MountSpy_SayVariables();
 	elseif msg == "debug" then
 
 		local debugStatus = "off";
 
-		-- sode note: lua needs a real ternary operator.
 		if not MountSpyDebugMode then
 			MountSpyDebugMode = true;
 			debugStatus = "on";
@@ -491,22 +551,37 @@ function MountSpy_ReceiveCommand(msg)
 		end
 
 		print("MountSpy debugging is now " .. debugStatus .. ".");
+	elseif msg == "quiet" then
+		if not MountSpySuppressLoadingMessages then
+			MountSpySuppressLoadingMessages = true;
+			print(MountSpyPrintPrefix, "Startup messages disabled.");
+		else
+			MountSpySuppressLoadingMessages = false;
+			print(MountSpyPrintPrefix, "Startup messages enabled.");
+		end	
 	elseif string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
 	end
 end
 
 -- startup events --
-function MountSpy_OnLoad()
---	mountspydebug("OnLoad has fired.");
+function MountSpy_OnEvent(self, eventName, ...)
+	local arg1 = ...;
+	mountspydebug("event happened: ", arg1, eventName );
+
+	if eventName == "PLAYER_TARGET_CHANGED" then
+		MountSpy_OnPlayerTargetChanged();
+	end
+
+	if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
+		MountSpy_Init();
+		self:RegisterEvent("PLAYER_TARGET_CHANGED");
+	end
 end
 
-function MountSpy_OnAddonLoaded(msg, arg1, arg2, ...)
-	if arg2 == "MountSpy" then
-	--	mountspydebug("OnAddonLoaded has fired.");
-		
-		MountSpy_Init();
-	end
+
+function MountSpy_OnLoad(frame)
+--	mountspydebug("OnLoad has fired.");
 end
 
 function MountSpy_OnHide()

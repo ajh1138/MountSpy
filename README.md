@@ -3,6 +3,7 @@
 </p>
 
 # MountSpy
+
 Mount Spy is an add-on for World of Warcraft that tells you what mount a player character is riding, and how to get it.
 
 Simply click on a mounted player and Mount Spy will give you the details directly in your chat window. If the mount is from an achievement, the achievement is linked for your convenience. It will also tell you if you own that particular mount.
@@ -17,12 +18,12 @@ The MountSpy window stays hidden between sessions. This is an account-wide setti
 
 Commands:
 
--- /mountspy getinfo  : gets the mount info of your target
+-- /mountspy getinfo : gets the mount info of your target
 
--- /mountspy match : attempts to put you on a mount that matches the target's mount ** New!
+-- /mountspy match : attempts to put you on a mount that matches the target's mount \*\* New!
 
--- /mountspy hide  : hides the MountSpy window
+-- /mountspy hide : hides the MountSpy window
 
--- /mountspy show  : shows the MountSpy window
+-- /mountspy show : shows the MountSpy window
 
-The latest version is also available via Curse/Twitch.
+The latest version is also available via Curse.
