@@ -111,9 +111,8 @@ function MountSpy_MakeTargetLinkString()
 end
 
 function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
-	mountspydebug("building mount info to print.")
 	if not targetName then
-		print(MountSpyPrintPrefix,"Error - No target.");
+		mountspydebug("Error - No target.");
 		return "";
 	end
 	
@@ -180,7 +179,6 @@ function MountSpy_CheckForValidTarget()
 	local isValidTarget = true;
 
 	local targetName = UnitName("target");
-	local playerCharName = UnitName("player");
 
 	if not targetName then
 		isValidTarget = false;
@@ -514,7 +512,10 @@ function MountSpy_ShowHelp()
 	 	"hide - Hides the UI\n",
 		"getinfo - Gets info about the targeted player's mount\n",
 		"match - Attempts to put you on a mount that matches the target's mount\n",
-		"quiet - Toggles the messages displayed at login\n"
+		"quiet - Toggles the messages displayed at login\n",
+		"history - Lists mounts that were spotted recently\n",
+		"clearhistory - Clears the mount history list\n",
+		"version - Displays the version number of this addon"
 	);
 end
 
@@ -561,13 +562,15 @@ function MountSpy_ReceiveCommand(msg)
 		end	
 	elseif string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
+	else
+		MountSpyPrint("Unknown command.");
 	end
 end
 
 -- startup events --
 function MountSpy_OnEvent(self, eventName, ...)
 	local arg1 = ...;
-	mountspydebug("event happened: ", arg1, eventName );
+	-- mountspydebug("event happened: ", arg1, eventName );
 
 	if eventName == "PLAYER_TARGET_CHANGED" then
 		MountSpy_OnPlayerTargetChanged();
@@ -581,7 +584,7 @@ end
 
 
 function MountSpy_OnLoad(frame)
---	mountspydebug("OnLoad has fired.");
+	mountspydebug("OnLoad has fired.");
 end
 
 function MountSpy_OnHide()
