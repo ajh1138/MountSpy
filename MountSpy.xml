@@ -38,8 +38,16 @@
 				MountSpy_OnEvent(self, event, ...);
 			</OnEvent>					
 		</Scripts>
-
 		<Layers>
+			<Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\DialogFrame\UI-DialogBox-Background">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="3" y="-3"/>
+                        <Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0" bottom="0.5"/>
+                </Texture>
+            </Layer>
 			<Layer level="OVERLAY">
 				<FontString
 					name="MountSpyTitleLabel"
