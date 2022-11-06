@@ -11,8 +11,11 @@ end
 
 function MountSpy_ShowHistory()
 	mountspydebug("show history");
-	for _, value in pairs(MountSpyHistoryTable) do
-		MountSpyPrint(value);		
+
+	if not MountSpyHistoryTable == nil then
+		for _, value in pairs(MountSpyHistoryTable) do
+			MountSpyPrint(value);
+		end
 	end
 end
 

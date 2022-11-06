@@ -111,6 +111,7 @@ function MountSpy_MakeTargetLinkString()
 end
 
 function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
+	mountspydebug("building mount info to print.")
 	if not targetName then
 		print(MountSpyPrintPrefix,"Error - No target.");
 		return "";
@@ -141,8 +142,6 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
 				resultString = resultString .. "|cffFFCCCC Your character does not have this mount.|h|r";
 			end
 		end
-
-		print(MountSpyPrintPrefix,resultString);
 	else
 		if (targetMountData ~= nil) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
 			local creatureName = targetMountData.creatureName;
@@ -161,7 +160,7 @@ end
 function MountSpy_TellTargetMountInfo(targetName, targetMountData)
 	local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName, targetMountData);
 
-	if not mountInfoToPrint == "" then
+	if mountInfoToPrint ~= '' then
 		MountSpyPrint(mountInfoToPrint);
 		MountSpy_AddToHistory(mountInfoToPrint);
 	end
