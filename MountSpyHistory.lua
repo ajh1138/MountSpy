@@ -1,6 +1,6 @@
 local MOUNTSPY_HISTORY_MAX_ROWS = 10;
 
-function table.contains(table, element)
+function MountSpy_TableContains(table, element)
   for _, value in pairs(table) do
     if value == element then
       return true
@@ -9,7 +9,7 @@ function table.contains(table, element)
   return false
 end
 
-function table.indexOf(table, element)
+function MountSpy_TableIndexOf(table, element)
 	local index = 1;
 
 	for _, value in pairs(table) do
@@ -49,7 +49,7 @@ function MountSpy_AddToHistory(mountInfoString)
 		return;
 	end
 
-	local mountAlreadyInTableAtPosition = table.indexOf(MountSpyHistoryTable, mountInfoString);
+	local mountAlreadyInTableAtPosition = MountSpy_TableIndexOf(MountSpyHistoryTable, mountInfoString);
 	
 	if mountAlreadyInTableAtPosition > -1 then
 		table.remove(MountSpyHistoryTable, mountAlreadyInTableAtPosition);

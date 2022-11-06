@@ -146,7 +146,7 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
 			local creatureName = strtrim(targetMountData.creatureName);
 
 			if MountSpy_IsThisADruidForm(creatureName) then
-				resultString = targetLinkString .. "is in " .. creatureName .. ".";
+				resultString = targetLinkString .. " is in " .. creatureName .. ".";
 			elseif creatureName == "Tarecgosa's Visage" then
 				resultString = targetLinkString .. " is transformed into " .. creatureName;
 			end
