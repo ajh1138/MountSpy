@@ -9,6 +9,20 @@ function table.contains(table, element)
   return false
 end
 
+function table.indexOf(table, element)
+	local index = 1;
+
+	for _, value in pairs(table) do
+		if value == element then
+			return index;
+		end
+
+		index = index + 1;
+	end
+
+	return -1;
+end
+
 function MountSpy_ShowHistory()
 	if MountSpyHistoryTable ~= nil and #MountSpyHistoryTable > 0 then
 		MountSpyPrint("History:");
@@ -35,16 +49,15 @@ function MountSpy_AddToHistory(mountInfoString)
 		return;
 	end
 
-	-- is this already in the history?
-	local alreadyInTable = table.contains(MountSpyHistoryTable, mountInfoString);
+	local mountAlreadyInTableAtPosition = table.indexOf(MountSpyHistoryTable, mountInfoString);
+	
+	if mountAlreadyInTableAtPosition > -1 then
+		table.remove(MountSpyHistoryTable, mountAlreadyInTableAtPosition);
+	end
 
-	if not alreadyInTable then
-		table.insert(MountSpyHistoryTable, mountInfoString);
+	table.insert(MountSpyHistoryTable, mountInfoString);
 
-		if #MountSpyHistoryTable > MOUNTSPY_HISTORY_MAX_ROWS then
-			table.remove(MountSpyHistoryTable, 1);
-		end
-	else
-		mountspydebug("entry already exists in history table.");
-	end	
+	if #MountSpyHistoryTable > MOUNTSPY_HISTORY_MAX_ROWS then
+		table.remove(MountSpyHistoryTable, 1);
+	end
 end

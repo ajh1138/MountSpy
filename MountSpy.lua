@@ -143,12 +143,12 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
 		end
 	else
 		if (targetMountData ~= nil) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
-			local creatureName = targetMountData.creatureName;
+			local creatureName = strtrim(targetMountData.creatureName);
 
 			if MountSpy_IsThisADruidForm(creatureName) then
-				resultString = targetLinkString .. "is in" .. creatureName .. ".";
+				resultString = targetLinkString .. "is in " .. creatureName .. ".";
 			elseif creatureName == "Tarecgosa's Visage" then
-				resultString = targetLinkString .. " is transformed into" .. creatureName;
+				resultString = targetLinkString .. " is transformed into " .. creatureName;
 			end
 		end
 	end
