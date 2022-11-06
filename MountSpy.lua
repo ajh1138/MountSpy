@@ -24,9 +24,9 @@ function MountSpy_MatchMountButtonClick()
 	local isValidTarget = MountSpy_CheckForValidTarget();
 
 	if isValidTarget then
-		local targetName = UnitName("target");
+		-- local targetName = UnitName("target");
 		local targetMountData = MountSpy_GetTargetMountData();
-		MountSpy_TellTargetMountInfo(targetName, targetMountData);
+		-- MountSpy_TellTargetMountInfo(targetName, targetMountData);
 		MountSpy_AttemptToMount(targetMountData);
 	end
 end
@@ -291,6 +291,8 @@ function MountSpy_AttemptToMount(targetMountData)
 	if hasMatchingMount then
 		local safeToProceed = true;
 
+		local alreadyMountedOnMatch = MountSpy_IsAlreadyMountedOnMatch(targetMountData.mountId);
+		mountspydebug("already mounted on match? ", alreadyMountedOnMatch);
 		-- Must not be in flight...
 		local flying = IsFlying();
 		if flying then
@@ -299,18 +301,25 @@ function MountSpy_AttemptToMount(targetMountData)
 			return;
 		end
 
-		if safeToProceed then
+		if safeToProceed and alreadyMountedOnMatch ~= true then
 			C_MountJournal.SummonByID(targetMountData.mountId);
 		end -- end of proceed check
 	end
  end
 
-function IsAlreadyMountedOnMatch()
-	local _, name, _, _, summoned = GetCompanionInfo("MOUNT", i);
+function MountSpy_IsAlreadyMountedOnMatch(targetMountId)
+	-- Tired of screwing with this function.  I need to get somebody to help me test it.
+		-- better to just iterate through the player's active spells and see if there's a match there.
+		
+	-- local myMountId, name, _, _, summoned, mountType = GetCompanionInfo("MOUNT", 1);
+	-- mountspydebug("my mount: ", myMountId);
+	-- local isAlready = false;
 
-	local isAlready = false;
+	-- if myMountId == targetMountId then
+	-- 	isAlready = true;
+	-- end
 
-	return isAlready;
+	return false;
 end
 
 function MountSpy_MakeMountChatLink(targetMountData)
