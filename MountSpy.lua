@@ -569,7 +569,7 @@ function MountSpy_ReceiveCommand(msg)
 			MountSpySuppressLoadingMessages = false;
 			print(MountSpyPrintPrefix, "Startup messages enabled.");
 		end	
-	elseif string.find(msg, "?") > 0 then
+	elseif string.find(msg, "?") and string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
 	else
 		MountSpyPrint("Unknown command.");
