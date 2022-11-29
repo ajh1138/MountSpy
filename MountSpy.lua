@@ -12,6 +12,23 @@ local TARGETED_PLAYER_SPELL_LIMIT = 20;
 
 local legionMountIds = {};
 
+function MountSpyPrint(msg, ...)
+	--[[
+	--Original Code
+	print(MountSpyPrintPrefix, msg, ...);
+	]]--
+
+	for i = 1, select('#', ...) do
+		msg = msg .. ' ' .. select(i, ...)
+	end
+	local ChatFrameName = "DEFAULT_CHAT_FRAME"
+	--GrimNotepad Change - use my other chat frame "4"	
+	--ChatFrameName = "ChatFrame4"
+	local ChatFrameRef = _G[ChatFrameName];
+	ChatFrameRef:AddMessage(MountSpyPrintPrefix .. msg);
+end
+
+
 function MountSpy_LoadMountIdList()
 	legionMountIds = C_MountJournal.GetMountIDs();
 end
@@ -41,15 +58,15 @@ function MountSpy_CheckAndShowTargetMountInfo()
 		local targetLinkString = MountSpy_MakeTargetLinkString();
 
 		if not UnitIsPlayer("target") then
-			print(MountSpyPrintPrefix,targetLinkString,"is not a player character.");
+			MountSpyPrint(targetLinkString,"is not a player character.")
 		else
 			local targetMountData = MountSpy_GetTargetMountData();
 			if not targetMountData then
-				print(MountSpyPrintPrefix,targetLinkString,"is not mounted.");
+				MountSpyPrint(targetLinkString,"is not mounted.");
 			end
 		end
 	else
-		print(MountSpyPrintPrefix, "No target selected.");
+		MountSpyPrint("No target selected.");
 	end
 end
 
@@ -208,7 +225,7 @@ function MountSpy_GetTargetMountData()
 
 	local buffCount = MountSpy_GetTargetBuffCount();
 	if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
-		print(MountSpyPrintPrefix, "Target has too many active spells.");
+		MountSpyPrint("Target has too many active spells.");
 		return nil;
 	end
 
@@ -297,7 +314,7 @@ function MountSpy_AttemptToMount(targetMountData)
 		local flying = IsFlying();
 		if flying then
 			safeToProceed = false;
-			print(MountSpyPrintPrefix,"Cannot switch mounts while flying.  That would be bad.");
+			MountSpyPrint("Cannot switch mounts while flying.  That would be bad.");
 			return;
 		end
 
@@ -494,11 +511,7 @@ function mountspydebug(...)
 
 	local msg = "|cFFFF0000MountSpy debug:|r ";
 
-	print(msg,...);
-end
-
-function MountSpyPrint(msg, ...)
-	print(MountSpyPrintPrefix, msg, ...);
+	MountSpyPrint(msg,...);
 end
 
 function MountSpy_PrintCurrentStatus()
@@ -506,7 +519,7 @@ function MountSpy_PrintCurrentStatus()
 
 	if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
 		statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
-		print(MountSpyPrintPrefix, statusMsg);
+		MountSpyPrint(statusMsg);
 	end
 
 end
@@ -560,14 +573,14 @@ function MountSpy_ReceiveCommand(msg)
 			MountSpyDebugMode = false;
 		end
 
-		print("MountSpy debugging is now " .. debugStatus .. ".");
+		MountSpyPrint("MountSpy debugging is now " .. debugStatus .. ".");
 	elseif msg == "quiet" then
 		if not MountSpySuppressLoadingMessages then
 			MountSpySuppressLoadingMessages = true;
-			print(MountSpyPrintPrefix, "Startup messages disabled.");
+			MountSpyPrint("Startup messages disabled.");
 		else
 			MountSpySuppressLoadingMessages = false;
-			print(MountSpyPrintPrefix, "Startup messages enabled.");
+			MountSpyPrint("Startup messages enabled.");
 		end	
 	elseif string.find(msg, "?") and string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
