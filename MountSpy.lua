@@ -1,9 +1,8 @@
 -- Props to SDPhantom for good info originally posted at http://www.wowinterface.com/forums/showthread.php?p=314065
-
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "10.00.02-01";
+local MOUNTSPY_VERSION = "10.00.05-01";
 
 -- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
@@ -13,506 +12,524 @@ local TARGETED_PLAYER_SPELL_LIMIT = 20;
 local legionMountIds = {};
 
 function MountSpy_LoadMountIdList()
-	legionMountIds = C_MountJournal.GetMountIDs();
+    legionMountIds = C_MountJournal.GetMountIDs();
 end
 
 function MountSpy_SetAutoModeDisplay()
-	getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText("Automatic Mode");
+    getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText(
+        "Automatic Mode");
 end
 
 function MountSpy_MatchMountButtonClick()
-	local isValidTarget = MountSpy_CheckForValidTarget();
+    local isValidTarget = MountSpy_CheckForValidTarget();
 
-	if isValidTarget then
-		-- local targetName = UnitName("target");
-		local targetMountData = MountSpy_GetTargetMountData();
-		-- MountSpy_TellTargetMountInfo(targetName, targetMountData);
-		MountSpy_AttemptToMount(targetMountData);
-	end
+    if isValidTarget then
+        -- local targetName = UnitName("target");
+        local targetMountData = MountSpy_GetTargetMountData();
+        -- MountSpy_TellTargetMountInfo(targetName, targetMountData);
+        MountSpy_AttemptToMount(targetMountData);
+    end
 end
 
 function MountSpy_CheckAndShowTargetMountInfo()
-	-- Note: more steps than an automatic mode target change.
-	local aTargetIsSelected = MountSpy_CheckForASelectedTarget();
+    -- Note: more steps than an automatic mode target change.
+    local aTargetIsSelected = MountSpy_CheckForASelectedTarget();
 
-	if aTargetIsSelected then
-		MountSpy_ValidateAndTell();  -- ValidateAndTell only prints data if the target is a player and is mounted, so...
-		
-		local targetLinkString = MountSpy_MakeTargetLinkString();
+    if aTargetIsSelected then
+        MountSpy_ValidateAndTell(); -- ValidateAndTell only prints data if the target is a player and is mounted, so...
 
-		if not UnitIsPlayer("target") then
-			print(MountSpyPrintPrefix,targetLinkString,"is not a player character.");
-		else
-			local targetMountData = MountSpy_GetTargetMountData();
-			if not targetMountData then
-				print(MountSpyPrintPrefix,targetLinkString,"is not mounted.");
-			end
-		end
-	else
-		print(MountSpyPrintPrefix, "No target selected.");
-	end
+        local targetLinkString = MountSpy_MakeTargetLinkString();
+
+        if not UnitIsPlayer("target") then
+            print(MountSpyPrintPrefix, targetLinkString,
+                  "is not a player character.");
+        else
+            local targetMountData = MountSpy_GetTargetMountData();
+            if not targetMountData then
+                print(MountSpyPrintPrefix, targetLinkString, "is not mounted.");
+            end
+        end
+    else
+        print(MountSpyPrintPrefix, "No target selected.");
+    end
 end
 
-function MountSpy_GetInfoButtonClick()
-	MountSpy_CheckAndShowTargetMountInfo();
-end
+function MountSpy_GetInfoButtonClick() MountSpy_CheckAndShowTargetMountInfo(); end
 
 function MountSpy_ActiveModeCheckButtonClick()
-	MountSpyAutomaticMode = MountSpy_ActiveModeCheckButton:GetChecked();
+    MountSpyAutomaticMode = MountSpy_ActiveModeCheckButton:GetChecked();
 
-	if MountSpyAutomaticMode then
-		MountSpy_ValidateAndTell();
-	end
+    if MountSpyAutomaticMode then MountSpy_ValidateAndTell(); end
 end
 
 function MountSpy_GetTargetBuffCount()
-	local buffCount = 0;
+    local buffCount = 0;
 
-	while true do
-		
-		local spellName = UnitBuff("target", buffCount + 1);
-		
-		if not spellName then
-			break;
-		else 
-			buffCount = buffCount + 1;
-		end 
+    while true do
 
-	end
+        local spellName = UnitBuff("target", buffCount + 1);
 
-	return buffCount;
+        if not spellName then
+            break
+        else
+            buffCount = buffCount + 1;
+        end
+
+    end
+
+    return buffCount;
 end
 
 function MountSpy_ValidateAndTell()
-	local isValidTarget = MountSpy_CheckForValidTarget();
+    local isValidTarget = MountSpy_CheckForValidTarget();
 
-	if isValidTarget then
-		local targetName = UnitName("target");
-		local targetMountData = MountSpy_GetTargetMountData();
+    if isValidTarget then
+        local targetName = UnitName("target");
+        local targetMountData = MountSpy_GetTargetMountData();
 
-		MountSpy_TellTargetMountInfo(targetName, targetMountData);
-	end
+        MountSpy_TellTargetMountInfo(targetName, targetMountData);
+    end
 end
 
 function MountSpy_MakeTargetLinkString()
-	local targetLinkColor = "";
-	local targetLinkString = "bleh";
-	local targetName = UnitName("target");
+    local targetLinkColor = "";
+    local targetLinkString = "bleh";
+    local targetName = UnitName("target");
 
-	if UnitIsFriend("target","player") then
-		targetLinkColor = "00FF00";
-		targetLinkString = "|cff" .. targetLinkColor .. "|Hplayer:" .. targetName .. "|h[" .. targetName .. "]|h|r";
-	else
-		targetLinkColor = "FF3333";
-		targetLinkString = "|cff" .. targetLinkColor .. "" .. targetName .. "|h|r";
-	end
+    if UnitIsFriend("target", "player") then
+        targetLinkColor = "00FF00";
+        targetLinkString = "|cff" .. targetLinkColor .. "|Hplayer:" ..
+                               targetName .. "|h[" .. targetName .. "]|h|r";
+    else
+        targetLinkColor = "FF3333";
+        targetLinkString = "|cff" .. targetLinkColor .. "" .. targetName ..
+                               "|h|r";
+    end
 
-	return targetLinkString;
+    return targetLinkString;
 end
 
 function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
-	if not targetName then
-		mountspydebug("Error - No target.");
-		return "";
-	end
-	
-	local targetLinkString = MountSpy_MakeTargetLinkString();
-	local resultString = "";
+    if not targetName then
+        mountspydebug("Error - No target.");
+        return "";
+    end
 
-	if targetMountData ~= nil and targetMountData.spellId ~= NOT_REALLY_A_MOUNT_SPELLID then
-		local mountLinkString = MountSpy_MakeMountChatLink(targetMountData);
-		resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
-		local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
+    local targetLinkString = MountSpy_MakeTargetLinkString();
+    local resultString = "";
 
-		-- override some stuff if target is the player...
-		if targetName == UnitName("player") then
-			playerHasMatchingMount = true;
-			resultString = "You are riding " .. mountLinkString .. ".  ";
-		end
+    if targetMountData ~= nil and targetMountData.spellId ~=
+        NOT_REALLY_A_MOUNT_SPELLID then
+        local mountLinkString = MountSpy_MakeMountChatLink(targetMountData);
+        resultString = targetLinkString .. " is riding " .. mountLinkString ..
+                           ".  ";
+        local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(
+                                           targetMountData);
 
-		if playerHasMatchingMount then
-			if targetName == UnitName("player") then
-				resultString = resultString
-			else
-				resultString = resultString .. "|cffCCFFCC  You have this mount.|h|r"
-			end
-		else
-			if targetMountData.creatureName ~= "Travel Form" then
-				resultString = resultString .. "|cffFFCCCC Your character does not have this mount.|h|r";
-			end
-		end
-	else
-		if (targetMountData ~= nil) and (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
-			local creatureName = strtrim(targetMountData.creatureName);
+        -- override some stuff if target is the player...
+        if targetName == UnitName("player") then
+            playerHasMatchingMount = true;
+            resultString = "You are riding " .. mountLinkString .. ".  ";
+        end
 
-			if MountSpy_IsThisADruidForm(creatureName) then
-				resultString = targetLinkString .. " is in " .. creatureName .. ".";
-			elseif creatureName == "Tarecgosa's Visage" then
-				resultString = targetLinkString .. " is transformed into " .. creatureName;
-			end
-		end
-	end
+        if playerHasMatchingMount then
+            if targetName == UnitName("player") then
+                resultString = resultString
+            else
+                resultString = resultString ..
+                                   "|cffCCFFCC  You have this mount.|h|r"
+            end
+        else
+            if targetMountData.creatureName ~= "Travel Form" then
+                resultString = resultString ..
+                                   "|cffFFCCCC Your character does not have this mount.|h|r";
+            end
+        end
+    else
+        if (targetMountData ~= nil) and
+            (targetMountData.spellId == NOT_REALLY_A_MOUNT_SPELLID) then
+            local creatureName = strtrim(targetMountData.creatureName);
 
-	return resultString;
+            if MountSpy_IsThisADruidForm(creatureName) then
+                resultString = targetLinkString .. " is in " .. creatureName ..
+                                   ".";
+            elseif creatureName == "Tarecgosa's Visage" then
+                resultString = targetLinkString .. " is transformed into " ..
+                                   creatureName;
+            end
+        end
+    end
+
+    return resultString;
 end
 
 function MountSpy_TellTargetMountInfo(targetName, targetMountData)
-	local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName, targetMountData);
+    local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName,
+                                                            targetMountData);
 
-	if mountInfoToPrint ~= '' then
-		MountSpyPrint(mountInfoToPrint);
-		MountSpy_AddToHistory(mountInfoToPrint);
-	end
+    if mountInfoToPrint ~= '' then
+        MountSpyPrint(mountInfoToPrint);
+        MountSpy_AddToHistory(mountInfoToPrint);
+    end
 end
 
 function MountSpy_CheckForASelectedTarget()
-	local targetName = UnitName("target");
+    local targetName = UnitName("target");
 
-	if not targetName then
-		return false;
-	else
-		return true;
-	end
+    if not targetName then
+        return false;
+    else
+        return true;
+    end
 end
 
 function MountSpy_CheckForValidTarget()
-	local isValidTarget = true;
+    local isValidTarget = true;
 
-	local targetName = UnitName("target");
+    local targetName = UnitName("target");
 
-	if not targetName then
-		isValidTarget = false;
-		return false;
-	end
-	
-	-- is target a player?
-	if isValidTarget then
-		local isPlayerCharacter = UnitIsPlayer("target");
-		if not isPlayerCharacter then
-			isValidTarget = false;
-		end
-	end
-	
-	return isValidTarget;
+    if not targetName then
+        isValidTarget = false;
+        return false;
+    end
+
+    -- is target a player?
+    if isValidTarget then
+        local isPlayerCharacter = UnitIsPlayer("target");
+        if not isPlayerCharacter then isValidTarget = false; end
+    end
+
+    return isValidTarget;
 end
 
 function MountSpy_GetTargetMountData()
-	local targetMountData = nil;
+    local targetMountData = nil;
 
-	local targetName, realmName = UnitName("target");
+    local targetName, realmName = UnitName("target");
 
-	if not targetName then
-		mountspydebug("no target name")
-		return nil;
-	end
+    if not targetName then
+        mountspydebug("no target name")
+        return nil;
+    end
 
-	local buffCount = MountSpy_GetTargetBuffCount();
-	if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
-		print(MountSpyPrintPrefix, "Target has too many active spells.");
-		return nil;
-	end
+    local buffCount = MountSpy_GetTargetBuffCount();
+    if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
+        print(MountSpyPrintPrefix, "Target has too many active spells.");
+        return nil;
+    end
 
-	-- iterate through target's buffs to see if any of them are mounts.
-	local spellIterator = 1;
-	
-	while true do
-		
-		local spellName,_,_,_,_,_,_,_,_,spellId = UnitBuff("target",spellIterator);
+    -- iterate through target's buffs to see if any of them are mounts.
+    local spellIterator = 1;
 
-		-- mountspydebug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
-		
-		if not spellName then
-			break;
-		end
+    while true do
 
-		spellIterator = spellIterator + 1;
-	
-		local testForMount = MountSpy_GetMountInfoBySpellId(spellId);
-		
-		if testForMount ~= nil then		
-			targetMountData = testForMount;
-			break;	
-		else
-			-- Check for Travel Form, etc.
-			if MountSpy_IsThisADruidForm(spellName) then
-				targetMountData = {creatureName=spellName, spellId=NOT_REALLY_A_MOUNT_SPELLID };
-				break;
-			else
-				if spellName == "Tarecgosa's Visage" then
-					targetMountData = {creatureName = spellName, spellId=NOT_REALLY_A_MOUNT_SPELLID };
-					break;
-				end
-			end	
-		end 
-	end -- end of buff iterator loop
-	
-	return targetMountData;
+        local spellName, _, _, _, _, _, _, _, _, spellId = UnitBuff("target",
+                                                                    spellIterator);
+
+        -- mountspydebug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
+
+        if not spellName then break end
+
+        spellIterator = spellIterator + 1;
+
+        local testForMount = MountSpy_GetMountInfoBySpellId(spellId);
+
+        if testForMount ~= nil then
+            targetMountData = testForMount;
+            break
+        else
+            -- Check for Travel Form, etc.
+            if MountSpy_IsThisADruidForm(spellName) then
+                targetMountData = {
+                    creatureName = spellName,
+                    spellId = NOT_REALLY_A_MOUNT_SPELLID
+                };
+                break
+            else
+                if spellName == "Tarecgosa's Visage" then
+                    targetMountData = {
+                        creatureName = spellName,
+                        spellId = NOT_REALLY_A_MOUNT_SPELLID
+                    };
+                    break
+                end
+            end
+        end
+    end -- end of buff iterator loop
+
+    return targetMountData;
 end
 
 function MountSpy_IsThisADruidForm(creatureName)
-	if (creatureName == "Bear Form") or (creatureName == "Travel Form") or (creatureName == "Cat Form") then
-		return true;
-	else
-		return false;
-	end
+    if (creatureName == "Bear Form") or (creatureName == "Travel Form") or
+        (creatureName == "Cat Form") then
+        return true;
+    else
+        return false;
+    end
 end
 
 function MountSpy_GetMountInfoBySpellId(spellId)
-	local mountInfo = nil;
-	
-	for i,v in ipairs(legionMountIds) do
-		local thisMountId = tonumber(legionMountIds[i]);
-		local creatureName, blehSpellId, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, blorp = C_MountJournal.GetMountInfoByID(thisMountId);
-		local thisTest = { mountId = thisMountId, creatureName = creatureName, collected = isCollected, index = i, spellId = blehSpellId };
+    local mountInfo = nil;
 
-		if tonumber(thisTest.spellId) == tonumber(spellId) then
-			mountInfo = thisTest;
-			break;
-		end
-	end
+    for i, v in ipairs(legionMountIds) do
+        local thisMountId = tonumber(legionMountIds[i]);
+        local creatureName, blehSpellId, icon, active, isUsable, sourceType,
+              isFavorite, isFactionSpecific, faction, isFiltered, isCollected,
+              blorp = C_MountJournal.GetMountInfoByID(thisMountId);
+        local thisTest = {
+            mountId = thisMountId,
+            creatureName = creatureName,
+            collected = isCollected,
+            index = i,
+            spellId = blehSpellId
+        };
 
---	mountspydebug("mountInfo:", mountInfo);
-	return mountInfo;
+        if tonumber(thisTest.spellId) == tonumber(spellId) then
+            mountInfo = thisTest;
+            break
+        end
+    end
+
+    --	mountspydebug("mountInfo:", mountInfo);
+    return mountInfo;
 end
 
 function MountSpy_DoesPlayerHaveMatchingMount(targetMountData)
-	local canHaz = targetMountData.collected;
+    local canHaz = targetMountData.collected;
 
-	return canHaz;
+    return canHaz;
 end
 
 function MountSpy_AttemptToMount(targetMountData)
-	if not targetMountData then
-		return;
-	end
-	
-	local hasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
+    if not targetMountData then return; end
 
-	if hasMatchingMount then
-		local safeToProceed = true;
+    local hasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(
+                                 targetMountData);
 
-		local alreadyMountedOnMatch = MountSpy_IsAlreadyMountedOnMatch(targetMountData.mountId);
-		mountspydebug("already mounted on match? ", alreadyMountedOnMatch);
-		-- Must not be in flight...
-		local flying = IsFlying();
-		if flying then
-			safeToProceed = false;
-			print(MountSpyPrintPrefix,"Cannot switch mounts while flying.  That would be bad.");
-			return;
-		end
+    if hasMatchingMount then
+        local safeToProceed = true;
 
-		if safeToProceed and alreadyMountedOnMatch ~= true then
-			C_MountJournal.SummonByID(targetMountData.mountId);
-		end -- end of proceed check
-	end
- end
+        local alreadyMountedOnMatch = MountSpy_IsAlreadyMountedOnMatch(
+                                          targetMountData.mountId);
+        mountspydebug("already mounted on match? ", alreadyMountedOnMatch);
+        -- Must not be in flight...
+        local flying = IsFlying();
+        if flying then
+            safeToProceed = false;
+            print(MountSpyPrintPrefix,
+                  "Cannot switch mounts while flying.  That would be bad.");
+            return;
+        end
+
+        if safeToProceed and alreadyMountedOnMatch ~= true then
+            C_MountJournal.SummonByID(targetMountData.mountId);
+        end -- end of proceed check
+    end
+end
 
 function MountSpy_IsAlreadyMountedOnMatch(targetMountId)
-	-- Tired of screwing with this function.  I need to get somebody to help me test it.
-		-- better to just iterate through the player's active spells and see if there's a match there.
-		
-	-- local myMountId, name, _, _, summoned, mountType = GetCompanionInfo("MOUNT", 1);
-	-- mountspydebug("my mount: ", myMountId);
-	-- local isAlready = false;
+    -- Tired of screwing with this function.  I need to get somebody to help me test it.
+    -- better to just iterate through the player's active spells and see if there's a match there.
 
-	-- if myMountId == targetMountId then
-	-- 	isAlready = true;
-	-- end
+    -- local myMountId, name, _, _, summoned, mountType = GetCompanionInfo("MOUNT", 1);
+    -- mountspydebug("my mount: ", myMountId);
+    -- local isAlready = false;
 
-	return false;
+    -- if myMountId == targetMountId then
+    -- 	isAlready = true;
+    -- end
+
+    return false;
 end
 
 function MountSpy_MakeMountChatLink(targetMountData)
-	local linkText = GetSpellLink(targetMountData.spellId);
+    local linkText = GetSpellLink(targetMountData.spellId);
 
-	local skipExtraInfoCheck = MountSpy_CheckForNonMountBuffs(targetMountData);
+    local skipExtraInfoCheck = MountSpy_CheckForNonMountBuffs(targetMountData);
 
-	if skipExtraInfoCheck then
+    if skipExtraInfoCheck then
 
-	else
-		local _,descriptionText,sourceText = C_MountJournal.GetMountInfoExtraByID(targetMountData.mountId);
-	
-		if sourceText ~= nil then
-			sourceText = string.gsub(sourceText, "|n", " ");
-			sourceText = string.gsub(sourceText, "  ", " ");
-			sourceText = strtrim(sourceText);
+    else
+        local _, descriptionText, sourceText =
+            C_MountJournal.GetMountInfoExtraByID(targetMountData.mountId);
 
-			if string.find(sourceText, "Achievement:") then
-				sourceText = MountSpy_MakeAchievementLink(sourceText);
-			end
+        if sourceText ~= nil then
+            sourceText = string.gsub(sourceText, "|n", " ");
+            sourceText = string.gsub(sourceText, "  ", " ");
+            sourceText = strtrim(sourceText);
 
-			linkText = linkText .. ", From " .. sourceText;
-		else
-			linkText = linkText .. " No additional info available.";
-		end
-	end
+            if string.find(sourceText, "Achievement:") then
+                sourceText = MountSpy_MakeAchievementLink(sourceText);
+            end
 
-	return linkText;
+            linkText = linkText .. ", From " .. sourceText;
+        else
+            linkText = linkText .. " No additional info available.";
+        end
+    end
+
+    return linkText;
 end
 
 function MountSpy_MakeAchievementLink(sourceText)
-	local newSourceText = "";
-	
-	for i = 1, #MountSpy_Achievements do
-		local fromTbl = MountSpy_Achievements[i].name;
+    local newSourceText = "";
 
-		local achFound = string.find(string.lower(sourceText),string.lower(fromTbl), nil, true);
+    for i = 1, #MountSpy_Achievements do
+        local fromTbl = MountSpy_Achievements[i].name;
 
-		if achFound then
-			local cheeveId = MountSpy_Achievements[i].id; 
-			local cheeveName = MountSpy_Achievements[i].name;
+        local achFound = string.find(string.lower(sourceText),
+                                     string.lower(fromTbl), nil, true);
 
-			local achievementLink = GetAchievementLink(cheeveId);
+        if achFound then
+            local cheeveId = MountSpy_Achievements[i].id;
+            local cheeveName = MountSpy_Achievements[i].name;
 
-			newSourceText = "|cffFFD700|hAchievement:|r " .. achievementLink; --string.gsub(sourceText, cheeveName, achievementLink .. " ");
-			break;
-		end
-	end
+            local achievementLink = GetAchievementLink(cheeveId);
 
-	-- in case the achievement isn't found.
-	if newSourceText == "" then
-		newSourceText = sourceText;
-	end
+            newSourceText = "|cffFFD700|hAchievement:|r " .. achievementLink; -- string.gsub(sourceText, cheeveName, achievementLink .. " ");
+            break
+        end
+    end
 
-	return newSourceText;
+    -- in case the achievement isn't found.
+    if newSourceText == "" then newSourceText = sourceText; end
+
+    return newSourceText;
 end
 
 function MountSpy_ScrubSpecialCharsForFind(stringIn)
-	local stringOut = string.gsub(stringIn, "%(", "%%(");
-	stringOut = string.gsub(stringOut, "%)", "%%)");
+    local stringOut = string.gsub(stringIn, "%(", "%%(");
+    stringOut = string.gsub(stringOut, "%)", "%%)");
 
-	return stringOut;
+    return stringOut;
 end
 
 function MountSpy_CheckForNonMountBuffs(targetMountData)
-	local nonMountBuffs = {"Travel Form", "Cat Form", "Bear Form", "Tarecgosa's Visage"};
+    local nonMountBuffs = {
+        "Travel Form", "Cat Form", "Bear Form", "Tarecgosa's Visage"
+    };
 
-	local nonMountFound = false;
+    local nonMountFound = false;
 
-	for i,v in ipairs(nonMountBuffs) do
-		if v == targetMountData.creatureName then
-			nonMountFound = true;
-		end
-	end
+    for i, v in ipairs(nonMountBuffs) do
+        if v == targetMountData.creatureName then nonMountFound = true; end
+    end
 
-	if nonMountFound then
-		return true;
-	else
-		return false;
-	end	
+    if nonMountFound then
+        return true;
+    else
+        return false;
+    end
 end
 
 function MountSpy_StringSearch(msg)
-	local searchString = string.gsub(msg, "?", "");
-	searchString = strtrim(searchString);
-	mountspydebug("." .. searchString .. ".");
+    local searchString = string.gsub(msg, "?", "");
+    searchString = strtrim(searchString);
+    mountspydebug("." .. searchString .. ".");
 
-	local resultsWereFound = false;
-	local searchResults = {};
+    local resultsWereFound = false;
+    local searchResults = {};
 
-	for i,v in ipairs(legionMountIds) do
-		local thisMountId = tonumber(legionMountIds[i]);
-		local creatureName, blehSpellId, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, blorp = C_MountJournal.GetMountInfoByID(thisMountId);
-		local thisTest = { mountId = thisMountId, creatureName = creatureName, collected = isCollected, index = i, spellId = blehSpellId };
+    for i, v in ipairs(legionMountIds) do
+        local thisMountId = tonumber(legionMountIds[i]);
+        local creatureName, blehSpellId, icon, active, isUsable, sourceType,
+              isFavorite, isFactionSpecific, faction, isFiltered, isCollected,
+              blorp = C_MountJournal.GetMountInfoByID(thisMountId);
+        local thisTest = {
+            mountId = thisMountId,
+            creatureName = creatureName,
+            collected = isCollected,
+            index = i,
+            spellId = blehSpellId
+        };
 
-		if string.find(string.lower(thisTest.creatureName), string.lower(searchString)) ~= nil then
-			resultsWereFound = true;
-			local chatLink = MountSpy_MakeMountChatLink(thisTest);
-			MountSpyPrint("result:", chatLink);
-		end
-	end
+        if string.find(string.lower(thisTest.creatureName),
+                       string.lower(searchString)) ~= nil then
+            resultsWereFound = true;
+            local chatLink = MountSpy_MakeMountChatLink(thisTest);
+            MountSpyPrint("result:", chatLink);
+        end
+    end
 
-	if resultsWereFound == false then
-		MountSpyPrint("No results found.");
-	end
+    if resultsWereFound == false then MountSpyPrint("No results found."); end
 end
 
 function MountSpy_ToggleUI(msg, editbox)
-	local isShown = MountSpy_MainFrame:IsShown();
+    local isShown = MountSpy_MainFrame:IsShown();
 
-	if isShown then
-		MountSpy_HideUI();
-		MountSpyHidden = true;
-	else
-		MountSpy_ShowUI();
-		MountSpyHidden = false;
-	end
+    if isShown then
+        MountSpy_HideUI();
+        MountSpyHidden = true;
+    else
+        MountSpy_ShowUI();
+        MountSpyHidden = false;
+    end
 end
 
 function MountSpy_ShowUI(msg, editbox)
-	MountSpy_MainFrame:Show();
-	MountSpyHidden = false;
+    MountSpy_MainFrame:Show();
+    MountSpyHidden = false;
 end
 
 function MountSpy_HideUI(msg, editbox)
-	MountSpy_MainFrame:Hide();
-	MountSpyHidden = true;
+    MountSpy_MainFrame:Hide();
+    MountSpyHidden = true;
 end
 
 function MountSpy_Init()
-	if not MountSpySuppressLoadingMessages then
-		MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
-	end
+    if not MountSpySuppressLoadingMessages then
+        MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
+    end
 
-	mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden );
+    mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:",
+                  MountSpyDebugMode, "hidden:", MountSpyHidden);
 
-	if MountSpyAutomaticMode == nil then
-		MountSpyAutomaticMode = true;
-	end
+    if MountSpyAutomaticMode == nil then MountSpyAutomaticMode = true; end
 
-	if MountSpyHidden == nil then
-		MountSpyHidden = false;
-	end
+    if MountSpyHidden == nil then MountSpyHidden = false; end
 
-	if MountSpyDebugMode == nil then
-		MountSpyDebugMode = false;
-	end
+    if MountSpyDebugMode == nil then MountSpyDebugMode = false; end
 
-	MountSpy_ActiveModeCheckButton:SetChecked(MountSpyAutomaticMode);
+    MountSpy_ActiveModeCheckButton:SetChecked(MountSpyAutomaticMode);
 
-	if MountSpyHidden then
-		MountSpy_HideUI();
-	end
+    if MountSpyHidden then MountSpy_HideUI(); end
 
-	C_Timer.After(6, MountSpy_SetAutoModeDisplay);
+    C_Timer.After(6, MountSpy_SetAutoModeDisplay);
 
-	C_Timer.After(10, MountSpy_LoadMountIdList);
-		
-	C_Timer.After(15, MountSpy_PrintCurrentStatus);
+    C_Timer.After(10, MountSpy_LoadMountIdList);
+
+    C_Timer.After(15, MountSpy_PrintCurrentStatus);
 end
 
 function MountSpy_OnPlayerTargetChanged()
-	if MountSpyAutomaticMode then
-		MountSpy_ValidateAndTell();
-	end
+    if MountSpyAutomaticMode then MountSpy_ValidateAndTell(); end
 end
 
 function mountspydebug(...)
-	if MountSpyDebugMode == false then
-		return;
-	end
+    if MountSpyDebugMode == false then return; end
 
-	local msg = "|cFFFF0000MountSpy debug:|r ";
+    local msg = "|cFFFF0000MountSpy debug:|r ";
 
-	print(msg,...);
+    print(msg, ...);
 end
 
-function MountSpyPrint(msg, ...)
-	print(MountSpyPrintPrefix, msg, ...);
-end
+function MountSpyPrint(msg, ...) print(MountSpyPrintPrefix, msg, ...); end
 
 function MountSpy_PrintCurrentStatus()
-	local statusMsg = "";
+    local statusMsg = "";
 
-	if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
-		statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
-		print(MountSpyPrintPrefix, statusMsg);
-	end
+    if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
+        statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
+        print(MountSpyPrintPrefix, statusMsg);
+    end
 
 end
 
 function MountSpy_SayVariables()
-	MountSpyPrint("MountSpyHidden:", MountSpyHidden, "MountSpyDebugMode:", MountSpyDebugMode, "MountSpyAutomaticMode:", MountSpyAutomaticMode);
+    MountSpyPrint("MountSpyHidden:", MountSpyHidden, "MountSpyDebugMode:",
+                  MountSpyDebugMode, "MountSpyAutomaticMode:",
+                  MountSpyAutomaticMode);
 end
 
 function MountSpy_ShowHelp()
@@ -578,30 +595,26 @@ end
 
 -- startup events --
 function MountSpy_OnEvent(self, eventName, ...)
-	local arg1 = ...;
-	-- mountspydebug("event happened: ", arg1, eventName );
+    local arg1 = ...;
+    -- mountspydebug("event happened: ", arg1, eventName );
 
-	if eventName == "PLAYER_TARGET_CHANGED" then
-		MountSpy_OnPlayerTargetChanged();
-	end
+    if eventName == "PLAYER_TARGET_CHANGED" then
+        MountSpy_OnPlayerTargetChanged();
+    end
 
-	if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
-		MountSpy_Init();
-		self:RegisterEvent("PLAYER_TARGET_CHANGED");
-	end
+    if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
+        MountSpy_Init();
+        self:RegisterEvent("PLAYER_TARGET_CHANGED");
+    end
 end
 
-
-function MountSpy_OnLoad(frame)
-	mountspydebug("OnLoad has fired.");
-end
+function MountSpy_OnLoad(frame) mountspydebug("OnLoad has fired."); end
 
 function MountSpy_OnHide()
-	MountSpyHidden = true;
---	mountspydebug("frame closed.  MountSpyHidden var = " .. tostring(MountSpyHidden))
+    MountSpyHidden = true;
+    --	mountspydebug("frame closed.  MountSpyHidden var = " .. tostring(MountSpyHidden))
 end
 
-SlashCmdList["MOUNTSPY_SLASHCMD"] = function(msg)
-	MountSpy_ReceiveCommand(msg);
-end
+SlashCmdList["MOUNTSPY_SLASHCMD"] =
+    function(msg) MountSpy_ReceiveCommand(msg); end
 SLASH_MOUNTSPY_SLASHCMD1 = "/mountspy";
