@@ -11,6 +11,18 @@ local TARGETED_PLAYER_SPELL_LIMIT = 20;
 
 local legionMountIds = {};
 
+function MountSpyPrint(msg, ...)
+	for i = 1, select('#', ...) do
+		msg = msg .. ' ' .. select(i, ...)
+	end
+	local ChatFrameName = "DEFAULT_CHAT_FRAME"
+	--GrimNotepad Change - use my other chat frame "4"	
+	--ChatFrameName = "ChatFrame4"
+	local ChatFrameRef = _G[ChatFrameName];
+	ChatFrameRef:AddMessage(MountSpyPrintPrefix .. msg);
+end
+
+
 function MountSpy_LoadMountIdList()
     legionMountIds = C_MountJournal.GetMountIDs();
 end
@@ -32,26 +44,25 @@ function MountSpy_MatchMountButtonClick()
 end
 
 function MountSpy_CheckAndShowTargetMountInfo()
-    -- Note: more steps than an automatic mode target change.
-    local aTargetIsSelected = MountSpy_CheckForASelectedTarget();
+  -- Note: more steps than an automatic mode target change.
+  local aTargetIsSelected = MountSpy_CheckForASelectedTarget();
 
-    if aTargetIsSelected then
+  if aTargetIsSelected then
         MountSpy_ValidateAndTell(); -- ValidateAndTell only prints data if the target is a player and is mounted, so...
 
-        local targetLinkString = MountSpy_MakeTargetLinkString();
+    local targetLinkString = MountSpy_MakeTargetLinkString();
 
-        if not UnitIsPlayer("target") then
-            print(MountSpyPrintPrefix, targetLinkString,
-                  "is not a player character.");
-        else
-            local targetMountData = MountSpy_GetTargetMountData();
-            if not targetMountData then
-                print(MountSpyPrintPrefix, targetLinkString, "is not mounted.");
-            end
-        end
-    else
-        print(MountSpyPrintPrefix, "No target selected.");
-    end
+		if not UnitIsPlayer("target") then
+			MountSpyPrint(targetLinkString,"is not a player character.")
+		else
+			local targetMountData = MountSpy_GetTargetMountData();
+			if not targetMountData then
+				MountSpyPrint(targetLinkString,"is not mounted.");
+			end
+		end
+	else
+		MountSpyPrint("No target selected.");
+	end
 end
 
 function MountSpy_GetInfoButtonClick() MountSpy_CheckAndShowTargetMountInfo(); end
@@ -212,11 +223,12 @@ function MountSpy_GetTargetMountData()
         return nil;
     end
 
-    local buffCount = MountSpy_GetTargetBuffCount();
-    if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
-        print(MountSpyPrintPrefix, "Target has too many active spells.");
-        return nil;
-    end
+	local buffCount = MountSpy_GetTargetBuffCount();
+	if buffCount > TARGETED_PLAYER_SPELL_LIMIT then
+		MountSpyPrint("Target has too many active spells.");
+		return nil;
+	end
+
 
     -- iterate through target's buffs to see if any of them are mounts.
     local spellIterator = 1;
@@ -302,25 +314,24 @@ function MountSpy_DoesPlayerHaveMatchingMount(targetMountData)
 end
 
 function MountSpy_AttemptToMount(targetMountData)
-    if not targetMountData then return; end
+	if not targetMountData then
+		return;
+	end
+	
+	local hasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
 
-    local hasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(
-                                 targetMountData);
+	if hasMatchingMount then
+		local safeToProceed = true;
 
-    if hasMatchingMount then
-        local safeToProceed = true;
-
-        local alreadyMountedOnMatch = MountSpy_IsAlreadyMountedOnMatch(
-                                          targetMountData.mountId);
-        mountspydebug("already mounted on match? ", alreadyMountedOnMatch);
-        -- Must not be in flight...
-        local flying = IsFlying();
-        if flying then
-            safeToProceed = false;
-            print(MountSpyPrintPrefix,
-                  "Cannot switch mounts while flying.  That would be bad.");
-            return;
-        end
+		local alreadyMountedOnMatch = MountSpy_IsAlreadyMountedOnMatch(targetMountData.mountId);
+		mountspydebug("already mounted on match? ", alreadyMountedOnMatch);
+		-- Must not be in flight...
+		local flying = IsFlying();
+		if flying then
+			safeToProceed = false;
+			MountSpyPrint("Cannot switch mounts while flying.  That would be bad.");
+			return;
+		end
 
         if safeToProceed and alreadyMountedOnMatch ~= true then
             C_MountJournal.SummonByID(targetMountData.mountId);
@@ -511,19 +522,17 @@ function mountspydebug(...)
 
     local msg = "|cFFFF0000MountSpy debug:|r ";
 
-    print(msg, ...);
+    MountSpyPrint(msg,...);
 end
 
-function MountSpyPrint(msg, ...) print(MountSpyPrintPrefix, msg, ...); end
 
 function MountSpy_PrintCurrentStatus()
     local statusMsg = "";
 
-    if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
-        statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
-        print(MountSpyPrintPrefix, statusMsg);
-    end
-
+	if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
+		statusMsg = "The MountSpy window is hidden. Use /mountspy to show it.";
+		MountSpyPrint(statusMsg);
+	end
 end
 
 function MountSpy_SayVariables()
@@ -577,14 +586,14 @@ function MountSpy_ReceiveCommand(msg)
 			MountSpyDebugMode = false;
 		end
 
-		print("MountSpy debugging is now " .. debugStatus .. ".");
+		MountSpyPrint("MountSpy debugging is now " .. debugStatus .. ".");
 	elseif msg == "quiet" then
 		if not MountSpySuppressLoadingMessages then
 			MountSpySuppressLoadingMessages = true;
-			print(MountSpyPrintPrefix, "Startup messages disabled.");
+			MountSpyPrint("Startup messages disabled.");
 		else
 			MountSpySuppressLoadingMessages = false;
-			print(MountSpyPrintPrefix, "Startup messages enabled.");
+			MountSpyPrint("Startup messages enabled.");
 		end	
 	elseif string.find(msg, "?") and string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
