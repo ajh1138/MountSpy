@@ -2,7 +2,7 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "10.00.05-01";
+local MOUNTSPY_VERSION = "10.00.05-02";
 
 -- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
@@ -12,14 +12,15 @@ local TARGETED_PLAYER_SPELL_LIMIT = 20;
 local legionMountIds = {};
 
 function MountSpyPrint(msg, ...)
-	for i = 1, select('#', ...) do
-		msg = msg .. ' ' .. select(i, ...)
+	local msgConcat = msg;
+    for i = 1, select('#', ...) do
+		msgConcat = msgConcat .. ' ' .. tostring(select(i, ...));
 	end
 	local ChatFrameName = "DEFAULT_CHAT_FRAME"
 	--GrimNotepad Change - use my other chat frame "4"	
 	--ChatFrameName = "ChatFrame4"
 	local ChatFrameRef = _G[ChatFrameName];
-	ChatFrameRef:AddMessage(MountSpyPrintPrefix .. msg);
+	ChatFrameRef:AddMessage(MountSpyPrintPrefix .. msgConcat);
 end
 
 
@@ -28,8 +29,7 @@ function MountSpy_LoadMountIdList()
 end
 
 function MountSpy_SetAutoModeDisplay()
-    getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText(
-        "Automatic Mode");
+    getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText("Automatic Mode");
 end
 
 function MountSpy_MatchMountButtonClick()
@@ -109,12 +109,10 @@ function MountSpy_MakeTargetLinkString()
 
     if UnitIsFriend("target", "player") then
         targetLinkColor = "00FF00";
-        targetLinkString = "|cff" .. targetLinkColor .. "|Hplayer:" ..
-                               targetName .. "|h[" .. targetName .. "]|h|r";
+        targetLinkString = "|cff" .. targetLinkColor .. "|Hplayer:" .. targetName .. "|h[" .. targetName .. "]|h|r";
     else
         targetLinkColor = "FF3333";
-        targetLinkString = "|cff" .. targetLinkColor .. "" .. targetName ..
-                               "|h|r";
+        targetLinkString = "|cff" .. targetLinkColor .. "" .. targetName .. "|h|r";
     end
 
     return targetLinkString;
@@ -132,10 +130,8 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
     if targetMountData ~= nil and targetMountData.spellId ~=
         NOT_REALLY_A_MOUNT_SPELLID then
         local mountLinkString = MountSpy_MakeMountChatLink(targetMountData);
-        resultString = targetLinkString .. " is riding " .. mountLinkString ..
-                           ".  ";
-        local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(
-                                           targetMountData);
+        resultString = targetLinkString .. " is riding " .. mountLinkString .. ".  ";
+        local playerHasMatchingMount = MountSpy_DoesPlayerHaveMatchingMount(targetMountData);
 
         -- override some stuff if target is the player...
         if targetName == UnitName("player") then
@@ -147,13 +143,11 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
             if targetName == UnitName("player") then
                 resultString = resultString
             else
-                resultString = resultString ..
-                                   "|cffCCFFCC  You have this mount.|h|r"
+                resultString = resultString .. "|cffCCFFCC  You have this mount.|h|r"
             end
         else
             if targetMountData.creatureName ~= "Travel Form" then
-                resultString = resultString ..
-                                   "|cffFFCCCC Your character does not have this mount.|h|r";
+                resultString = resultString .. "|cffFFCCCC Your character does not have this mount.|h|r";
             end
         end
     else
@@ -162,11 +156,9 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
             local creatureName = strtrim(targetMountData.creatureName);
 
             if MountSpy_IsThisADruidForm(creatureName) then
-                resultString = targetLinkString .. " is in " .. creatureName ..
-                                   ".";
+                resultString = targetLinkString .. " is in " .. creatureName .. ".";
             elseif creatureName == "Tarecgosa's Visage" then
-                resultString = targetLinkString .. " is transformed into " ..
-                                   creatureName;
+                resultString = targetLinkString .. " is transformed into " .. creatureName;
             end
         end
     end
@@ -175,8 +167,7 @@ function MountSpy_BuildMountInfoToPrint(targetName, targetMountData)
 end
 
 function MountSpy_TellTargetMountInfo(targetName, targetMountData)
-    local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName,
-                                                            targetMountData);
+    local mountInfoToPrint = MountSpy_BuildMountInfoToPrint(targetName, targetMountData);
 
     if mountInfoToPrint ~= '' then
         MountSpyPrint(mountInfoToPrint);
@@ -235,8 +226,7 @@ function MountSpy_GetTargetMountData()
 
     while true do
 
-        local spellName, _, _, _, _, _, _, _, _, spellId = UnitBuff("target",
-                                                                    spellIterator);
+        local spellName, _, _, _, _, _, _, _, _, spellId = UnitBuff("target", spellIterator);
 
         -- mountspydebug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
 
@@ -273,8 +263,7 @@ function MountSpy_GetTargetMountData()
 end
 
 function MountSpy_IsThisADruidForm(creatureName)
-    if (creatureName == "Bear Form") or (creatureName == "Travel Form") or
-        (creatureName == "Cat Form") then
+    if (creatureName == "Bear Form") or (creatureName == "Travel Form") or (creatureName == "Cat Form") then
         return true;
     else
         return false;
@@ -389,8 +378,7 @@ function MountSpy_MakeAchievementLink(sourceText)
     for i = 1, #MountSpy_Achievements do
         local fromTbl = MountSpy_Achievements[i].name;
 
-        local achFound = string.find(string.lower(sourceText),
-                                     string.lower(fromTbl), nil, true);
+        local achFound = string.find(string.lower(sourceText), string.lower(fromTbl), nil, true);
 
         if achFound then
             local cheeveId = MountSpy_Achievements[i].id;
@@ -455,8 +443,7 @@ function MountSpy_StringSearch(msg)
             spellId = blehSpellId
         };
 
-        if string.find(string.lower(thisTest.creatureName),
-                       string.lower(searchString)) ~= nil then
+        if string.find(string.lower(thisTest.creatureName), string.lower(searchString)) ~= nil then
             resultsWereFound = true;
             local chatLink = MountSpy_MakeMountChatLink(thisTest);
             MountSpyPrint("result:", chatLink);
@@ -493,8 +480,7 @@ function MountSpy_Init()
         MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
     end
 
-    mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:",
-                  MountSpyDebugMode, "hidden:", MountSpyHidden);
+    mountspydebug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden);
 
     if MountSpyAutomaticMode == nil then MountSpyAutomaticMode = true; end
 
@@ -555,7 +541,7 @@ function MountSpy_ShowHelp()
 end
 
 function MountSpy_ReceiveCommand(msg) 
-	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebugMode);
+	--mountspydebug(msg, MountSpyDebugMode);
 
 	if msg == nil or msg == "" or msg == "show" then
 		MountSpy_ShowUI();
