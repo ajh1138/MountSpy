@@ -533,62 +533,64 @@ function MountSpy_SayVariables()
 end
 
 function MountSpy_ShowHelp()
-    MountSpyPrint("commands:\n", "show - Shows the UI\n",
-                  "hide - Hides the UI\n",
-                  "getinfo - Gets info about the targeted player's mount\n",
-                  "match - Attempts to put you on a mount that matches the target's mount\n",
-                  "quiet - Toggles the messages displayed at login\n",
-                  "history - Lists mounts that were spotted recently\n",
-                  "clearhistory - Clears the mount history list\n",
-                  "version - Displays the version number of this addon");
+	MountSpyPrint("commands:\n",
+		"show - Shows the UI\n",
+	 	"hide - Hides the UI\n",
+		"getinfo - Gets info about the targeted player's mount\n",
+		"match - Attempts to put you on a mount that matches the target's mount\n",
+		"quiet - Toggles the messages displayed at login\n",
+		"history - Lists mounts that were spotted recently\n",
+		"clearhistory - Clears the mount history list\n",
+		"version - Displays the version number of this addon"
+	);
 end
 
-function MountSpy_ReceiveCommand(msg)
-    mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebugMode);
+function MountSpy_ReceiveCommand(msg) 
+	mountspydebug(MountSpyPrintPrefix, msg, MountSpyDebugMode);
 
-    if msg == nil or msg == "" or msg == "show" then
-        MountSpy_ShowUI();
-    elseif msg == "history" or msg == "hist" then
-        MountSpy_ShowHistory();
-    elseif msg == "clearhistory" or msg == "clrhist" then
-        MountSpy_ClearHistory();
-    elseif msg == "hide" then
-        MountSpy_HideUI();
-    elseif msg == "help" then
-        MountSpy_ShowHelp();
-    elseif msg == "getinfo" then
-        MountSpy_CheckAndShowTargetMountInfo();
-    elseif msg == "match" then
-        MountSpy_MatchMountButtonClick();
-    elseif msg == "version" then
-        MountSpyPrint("version", MOUNTSPY_VERSION);
-    elseif msg == "vars" then
-        MountSpy_SayVariables();
-    elseif msg == "debug" then
+	if msg == nil or msg == "" or msg == "show" then
+		MountSpy_ShowUI();
+	elseif msg == "history" or msg == "hist" then
+		MountSpy_ShowHistory();
+	elseif msg == "clearhistory" or msg == "clrhist" then
+		MountSpy_ClearHistory();
+	elseif msg == "hide" then
+		MountSpy_HideUI();
+	elseif msg == "help" then
+		MountSpy_ShowHelp();
+	elseif msg == "getinfo" then
+		MountSpy_CheckAndShowTargetMountInfo();
+	elseif msg == "match" then
+		MountSpy_MatchMountButtonClick();
+	elseif msg == "version" then
+		MountSpyPrint("version", MOUNTSPY_VERSION);
+	elseif msg == "vars" then
+		MountSpy_SayVariables();
+	elseif msg == "debug" then
 
-        local debugStatus = "off";
+		local debugStatus = "off";
 
-        if not MountSpyDebugMode then
-            MountSpyDebugMode = true;
-            debugStatus = "on";
-        else
-            MountSpyDebugMode = false;
-        end
+		if not MountSpyDebugMode then
+			MountSpyDebugMode = true;
+			debugStatus = "on";
+		else
+			MountSpyDebugMode = false;
+		end
 
-        print("MountSpy debugging is now " .. debugStatus .. ".");
-    elseif msg == "quiet" then
-        if not MountSpySuppressLoadingMessages then
-            MountSpySuppressLoadingMessages = true;
-            print(MountSpyPrintPrefix, "Startup messages disabled.");
-        else
-            MountSpySuppressLoadingMessages = false;
-            print(MountSpyPrintPrefix, "Startup messages enabled.");
-        end
-    elseif string.find(msg, "?") > 0 then
-        MountSpy_StringSearch(msg);
-    else
-        MountSpyPrint("Unknown command.");
-    end
+		print("MountSpy debugging is now " .. debugStatus .. ".");
+	elseif msg == "quiet" then
+		if not MountSpySuppressLoadingMessages then
+			MountSpySuppressLoadingMessages = true;
+			print(MountSpyPrintPrefix, "Startup messages disabled.");
+		else
+			MountSpySuppressLoadingMessages = false;
+			print(MountSpyPrintPrefix, "Startup messages enabled.");
+		end	
+	elseif string.find(msg, "?") and string.find(msg, "?") > 0 then
+		MountSpy_StringSearch(msg);
+	else
+		MountSpyPrint("Unknown command.");
+	end
 end
 
 -- startup events --
