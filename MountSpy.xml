@@ -24,7 +24,7 @@
 			<OnLoad>
 				self:RegisterForDrag("LeftButton");
 				self:RegisterEvent("ADDON_LOADED");
-				MountSpy_OnLoad(self);
+				self:RegisterEvent("PLAYER_LOGIN");				
 			</OnLoad>
 			<OnDragStart>
 				if(button == "LeftButton") then

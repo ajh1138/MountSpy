@@ -1,3 +1,5 @@
+local _, MountSpy = ...;
+
 function MountSpy_ToggleUI(msg, editbox)
     local isShown = MountSpy_MainFrame:IsShown();
 
@@ -24,3 +26,23 @@ function MountSpy_SetAutoModeDisplay()
     getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText("Automatic Mode");
 end
 
+function MountSpy_GetInfoButtonClick()
+    MountSpy_CheckAndShowTargetMountInfo();
+end
+
+function MountSpy_ActiveModeCheckButtonClick()
+    MountSpyAutomaticMode = MountSpy_ActiveModeCheckButton:GetChecked();
+
+    if MountSpyAutomaticMode then
+        MountSpy_ValidateAndTell();
+    end
+end
+
+function MountSpy_OnLoad(frame)
+    MountSpy.Debug("OnLoad has fired.");
+end
+
+function MountSpy_OnHide()
+    MountSpyHidden = true;
+    --	MountSpy.Debug("frame closed.  MountSpyHidden var = " .. tostring(MountSpyHidden))
+end
