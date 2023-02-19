@@ -32,6 +32,12 @@ function MountSpy_ShowHistory()
 	else
 		MountSpyPrint("History is empty.");
 	end
+
+	for i = 1, NUM_CHAT_WINDOWS do
+		local winName = Chat_GetChannelShortcutName(i)
+		if winName == nil then winName = "(none)" end
+     	getglobal("ChatFrame"..i):AddMessage("This is ChatFrame"..i .. " aka " .. winName, 0, 0, 0, 0);
+	end
 end
 
 function MountSpy_ClearHistory()

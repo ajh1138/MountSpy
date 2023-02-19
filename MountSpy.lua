@@ -2,7 +2,7 @@
 local MountSpyPrintHexColor = "2B98FF";
 local MountSpyPrintPrefix = "|cFF" .. MountSpyPrintHexColor .. "Mount Spy:|r";
 local NOT_REALLY_A_MOUNT_SPELLID = 999999;
-local MOUNTSPY_VERSION = "10.00.05-02";
+local MOUNTSPY_VERSION = "10.00.05-03";
 
 -- If a targeted player has more than TARGETED_PLAYER_SPELL_LIMIT spells/buffs on them,
 -- abort the mount check because the loop will be really slow.
@@ -16,20 +16,13 @@ function MountSpyPrint(msg, ...)
     for i = 1, select('#', ...) do
 		msgConcat = msgConcat .. ' ' .. tostring(select(i, ...));
 	end
-	local ChatFrameName = "DEFAULT_CHAT_FRAME"
-	--GrimNotepad Change - use my other chat frame "4"	
-	--ChatFrameName = "ChatFrame4"
-	local ChatFrameRef = _G[ChatFrameName];
+	    
+	local ChatFrameRef = _G[MountSpyChatFrameName];
 	ChatFrameRef:AddMessage(MountSpyPrintPrefix .. msgConcat);
 end
 
-
 function MountSpy_LoadMountIdList()
     legionMountIds = C_MountJournal.GetMountIDs();
-end
-
-function MountSpy_SetAutoModeDisplay()
-    getglobal(MountSpy_ActiveModeCheckButton:GetName() .. "Text"):SetText("Automatic Mode");
 end
 
 function MountSpy_MatchMountButtonClick()
@@ -219,7 +212,6 @@ function MountSpy_GetTargetMountData()
 		MountSpyPrint("Target has too many active spells.");
 		return nil;
 	end
-
 
     -- iterate through target's buffs to see if any of them are mounts.
     local spellIterator = 1;
@@ -453,29 +445,11 @@ function MountSpy_StringSearch(msg)
     if resultsWereFound == false then MountSpyPrint("No results found."); end
 end
 
-function MountSpy_ToggleUI(msg, editbox)
-    local isShown = MountSpy_MainFrame:IsShown();
 
-    if isShown then
-        MountSpy_HideUI();
-        MountSpyHidden = true;
-    else
-        MountSpy_ShowUI();
-        MountSpyHidden = false;
-    end
-end
-
-function MountSpy_ShowUI(msg, editbox)
-    MountSpy_MainFrame:Show();
-    MountSpyHidden = false;
-end
-
-function MountSpy_HideUI(msg, editbox)
-    MountSpy_MainFrame:Hide();
-    MountSpyHidden = true;
-end
 
 function MountSpy_Init()
+    if MountSpyChatFrameName == nil then MountSpyChatFrameName = "DEFAULT_CHAT_FRAME"; end
+
     if not MountSpySuppressLoadingMessages then
         MountSpyPrint("MountSpy", MOUNTSPY_VERSION, "is loading.");
     end
@@ -508,7 +482,7 @@ function mountspydebug(...)
 
     local msg = "|cFFFF0000MountSpy debug:|r ";
 
-    MountSpyPrint(msg,...);
+    print(msg,...); -- do NOT use MountSpyPrint here! vars might not be initialized yet. --
 end
 
 
@@ -540,8 +514,46 @@ function MountSpy_ShowHelp()
 	);
 end
 
-function MountSpy_ReceiveCommand(msg) 
+function MountSpy_ToggleDebugMode()
+	local debugStatusText = "off";
+
+    if not MountSpyDebugMode then
+        MountSpyDebugMode = true;
+        debugStatusText = "on";
+    else
+        MountSpyDebugMode = false;
+    end
+
+    print("MountSpy debugging is now " .. debugStatusText .. ".");
+end
+
+function MountSpy_ToggleQuietMode()
+    if not MountSpySuppressLoadingMessages then
+        MountSpySuppressLoadingMessages = true;
+        MountSpyPrint("Startup messages disabled.");
+    else
+        MountSpySuppressLoadingMessages = false;
+        MountSpyPrint("Startup messages enabled.");
+    end	
+end
+
+function MountSpy_SetChatFrameName(msg)
+    local frameName = gsub(msg,"setwindow ","");
+    mountspydebug("frame name -" .. frameName .. "-");
+    local ChatFrameRef = _G[frameName];
+    ChatFrameRef:AddMessage("whatever!!", 1.0, 1.0, 0);
+    if ChatFrameRef == nil then
+        print("Error: Chat window " .. frameName .. " not found."); -- Do not use MountSpyPrint to show this error, in case a chat window was closed, etc. --
+    else
+        MountSpyChatFrameName = frameName;
+        MountSpyPrint("Chat window set to " .. MountSpyChatFrameName);
+    end
+end
+
+function MountSpy_ReceiveCommand(msg, ...) 
 	--mountspydebug(msg, MountSpyDebugMode);
+
+    msg = strtrim(msg);
 
 	if msg == nil or msg == "" or msg == "show" then
 		MountSpy_ShowUI();
@@ -562,25 +574,11 @@ function MountSpy_ReceiveCommand(msg)
 	elseif msg == "vars" then
 		MountSpy_SayVariables();
 	elseif msg == "debug" then
-
-		local debugStatus = "off";
-
-		if not MountSpyDebugMode then
-			MountSpyDebugMode = true;
-			debugStatus = "on";
-		else
-			MountSpyDebugMode = false;
-		end
-
-		MountSpyPrint("MountSpy debugging is now " .. debugStatus .. ".");
+        MountSpy_ToggleDebugMode();
 	elseif msg == "quiet" then
-		if not MountSpySuppressLoadingMessages then
-			MountSpySuppressLoadingMessages = true;
-			MountSpyPrint("Startup messages disabled.");
-		else
-			MountSpySuppressLoadingMessages = false;
-			MountSpyPrint("Startup messages enabled.");
-		end	
+        MountSpy_ToggleQuietMode();
+    elseif string.find(msg,"setwindow ") and string.find(msg,"setwindow ") > 0 then
+        MountSpy_SetChatFrameName(msg);
 	elseif string.find(msg, "?") and string.find(msg, "?") > 0 then
 		MountSpy_StringSearch(msg);
 	else
