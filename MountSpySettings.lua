@@ -26,7 +26,7 @@ function MountSpy:InitSavedVariables()
     end
 
     if MountSpyDisableInArenas == nil then
-        MountSpyDisableInAreas = true;
+        MountSpyDisableInArenas = true;
     end
 
     if MountSpyDisableInInstances == nil then
@@ -37,7 +37,11 @@ function MountSpy:InitSavedVariables()
         MountSpyIgnoreSelf = true;
     end
 
-    MountSpy.Debug("saved vars done.")
+    if MountSpyIgnoreShapeshifts == nil then
+        MountSpyIgnoreShapeshifts = true;
+    end
+
+    MountSpy.Debug("acct vars done.")
 end
 
 function MountSpy.ToggleDebugMode()
@@ -63,7 +67,7 @@ function MountSpy.ToggleQuietMode()
     end
 end
 
-function MountSpy_SetChatFrameName(msg)
+function MountSpy.SetChatFrameName(msg)
     local frameName = gsub(msg, "setwindow ", "");
     MountSpy.Debug("frame name -" .. frameName .. "-");
     local ChatFrameRef = _G[frameName];
@@ -76,7 +80,7 @@ function MountSpy_SetChatFrameName(msg)
     end
 end
 
-function MountSpy_PrintCurrentStatus()
+function MountSpy.PrintCurrentStatus()
     local statusMsg = "";
 
     if MountSpyHidden == true and not MountSpySuppressLoadingMessages then
@@ -85,7 +89,7 @@ function MountSpy_PrintCurrentStatus()
     end
 end
 
-function MountSpy_SayVariables()
+function MountSpy.SayVariables()
     MountSpy.Print("MountSpyHidden:", MountSpyHidden, "MountSpy.DebugMode:", MountSpy.DebugMode, "MountSpyAutomaticMode:", MountSpyAutomaticMode);
 end
 
