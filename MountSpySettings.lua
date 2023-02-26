@@ -150,6 +150,6 @@ function MountSpy.PrintCurrentStatus()
 end
 
 function MountSpy.SayVariables()
-    MountSpy.Print("hidden:", MountSpyHidden, ",debugmode:", MountSpyDebugMode, ",automatic:", MountSpyAutomaticMode, ",disabled in bg:", MountSpyDisableInBattlegrounds, ",disabled in arenas:", MountSpyDisableInArenas, ",disabled in combat:", MountSpyDisableInCombat, ",disabled in instances:", MountSpyDisableInInstances, ",ignore self:", MountSpyIgnoreSelf, ",ignore shapeshifts:", MountSpyIgnoreShapeshifts, ",chat frame:", MountSpyChatFrameName);
+    MountSpy.Print("hidden:", MountSpyHidden, ", debugmode:", MountSpyDebugMode, ", automatic:", MountSpyAutomaticMode, ", disabled in bg:", MountSpyDisableInBattlegrounds, ", disabled in arenas:", MountSpyDisableInArenas, ", disabled in combat:", MountSpyDisableInCombat, ", disabled in instances:", MountSpyDisableInInstances, ", ignore self:", MountSpyIgnoreSelf, ", ignore shapeshifts:", MountSpyIgnoreShapeshifts, ", chat frame:", MountSpyChatFrameName);
 end
 
