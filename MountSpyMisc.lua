@@ -32,8 +32,16 @@ function MountSpy.StringSearch(msg)
 
     for i, v in ipairs(MountSpy.Props.LegionMountIds) do
         local thisMountId = tonumber(MountSpy.Props.LegionMountIds[i]);
-        local creatureName, blehSpellId, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, blorp = C_MountJournal.GetMountInfoByID(thisMountId);
-        local thisTest = {mountId = thisMountId, creatureName = creatureName, collected = isCollected, index = i, spellId = blehSpellId};
+        local creatureName, blehSpellId, icon, active, isUsable, sourceType,
+              isFavorite, isFactionSpecific, faction, isFiltered, isCollected,
+              blorp = C_MountJournal.GetMountInfoByID(thisMountId);
+        local thisTest = {
+            mountId = thisMountId,
+            creatureName = creatureName,
+            collected = isCollected,
+            index = i,
+            spellId = blehSpellId
+        };
 
         if string.find(string.lower(thisTest.creatureName), string.lower(searchString)) ~= nil then
             resultsWereFound = true;
@@ -58,7 +66,6 @@ function MountSpy.GetTargetBuffCount()
     local buffCount = 0;
 
     while true do
-
         local spellName = UnitBuff("target", buffCount + 1);
 
         if not spellName then
@@ -66,7 +73,6 @@ function MountSpy.GetTargetBuffCount()
         else
             buffCount = buffCount + 1;
         end
-
     end
 
     return buffCount;
@@ -134,6 +140,7 @@ function MountSpy.ChatFrameLooper()
         if winName == nil then
             winName = "(none)"
         end
-        getglobal("ChatFrame" .. i):AddMessage("This is ChatFrame" .. i .. " aka " .. winName, 0, 0, 0, 0);
+        getglobal("ChatFrame" .. i):AddMessage(
+            "This is ChatFrame" .. i .. " aka " .. winName, 0, 0, 0, 0);
     end
 end

@@ -44,7 +44,6 @@ end
 
 function MountSpy_OnHide()
     MountSpyHidden = true;
-    --	MountSpy.Debug("frame closed.  MountSpyHidden var = " .. tostring(MountSpyHidden))
 end
 
 function MountSpy_MatchMountButtonClick()

@@ -3,7 +3,11 @@ local _, MountSpy = ...;
 
 local PrefixHexColor = "2B98FF";
 
-MountSpy.Props = {Version = "10.00.05-03", PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r", LegionMountIds = {}}
+MountSpy.Props = {
+    Version = "10.00.05-03",
+    PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r",
+    LegionMountIds = {}
+}
 
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999;
 MountSpy.MAXIMUM_BUFF_COUNT = 20;
@@ -56,7 +60,8 @@ function MountSpy.MakeTargetLinkString()
 end
 
 function MountSpy.IsThisADruidForm(creatureName)
-    if (creatureName == "Bear Form") or (creatureName == "Travel Form") or (creatureName == "Cat Form") then
+    if (creatureName == "Bear Form") or (creatureName == "Travel Form") or
+        (creatureName == "Cat Form") then
         return true;
     else
         return false;
@@ -145,7 +150,13 @@ function MountSpy.OnPlayerTargetChanged()
 end
 
 function MountSpy.ShowHelp()
-    MountSpy.Print("commands:\n", "show - Shows the UI\n", "hide - Hides the UI\n", "getinfo - Gets info about the targeted player's mount\n", "match - Attempts to put you on a mount that matches the target's mount\n", "quiet - Toggles the messages displayed at login\n", "history - Lists mounts that were spotted recently\n", "clearhistory - Clears the mount history list\n", "version - Displays the version number of this addon");
+    MountSpy.Print("commands:\n", "show - Shows the UI\n", "hide - Hides the UI\n",
+                   "getinfo - Gets info about the targeted player's mount\n",
+                   "match - Attempts to put you on a mount that matches the target's mount\n",
+                   "quiet - Toggles the messages displayed at login\n",
+                   "history - Lists mounts that were spotted recently\n",
+                   "clearhistory - Clears the mount history list\n",
+                   "version - Displays the version number of this addon");
 end
 
 function MountSpy.ReceiveCommand(msg, ...)
