@@ -9,7 +9,7 @@ MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999;
 MountSpy.MAXIMUM_BUFF_COUNT = 20;
 
 function MountSpy.Debug(...)
-    if MountSpy.DebugMode == false then
+    if MountSpyDebugMode == false then
         return;
     end
 
@@ -70,7 +70,7 @@ function MountSpy:Init()
         MountSpy.Print("MountSpy", MountSpy.Version, "is loading.");
     end
 
-    MountSpy.Debug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpy.DebugMode, "hidden:", MountSpyHidden);
+    MountSpy.Debug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden);
 
     MountSpy_ActiveModeCheckButton:SetChecked(MountSpyAutomaticMode);
 
@@ -104,38 +104,39 @@ function MountSpy.OnPlayerTargetChanged()
     if MountSpyIgnoreSelf then
         local playerId = UnitGUID("player");
         if targetId == playerId then
-            MountSpy.Debug("stop clicking yourself.", playerId);
+            MountSpy.Debug("seriously, stop clicking yourself.", playerId);
             return;
         end
     end
 
     if MountSpyDisableInCombat then
         if InCombatLockdown() then
+            MountSpy.Debug("...disabled in combat, and you're in combat. so there.");
             return;
         end
     end
 
     if MountSpyDisableInBattlegrounds then
         local bgNum = UnitInBattleground("player");
-        MountSpy.Debug("battleground? ", bgNum);
         if bgNum ~= nil then
+            MountSpy.Debug("...currently disabled in battlegrounds. aborting check.");
             return;
         end
     end
 
     if MountSpyDisableInArenas then
-        -- check to see if they're in an arena...
         local isArena, _ = IsActiveBattlefieldArena();
-        MountSpy.Debug("is arena?", isArena);
         if isArena then
+            MountSpy.Debug("...disabled in arenas, and you're in an arena. congrats.", isArena);
             return;
         end
     end
 
     if MountSpyDisableInInstances then
         local instanceName, instanceType = GetInstanceInfo();
-        MountSpy.Debug("instance: ", instanceName, "type: ", instanceType);
+        -- MountSpy.Debug("instance: ", instanceName, "type: ", instanceType);
         if instanceType ~= "none" then
+            MountSpy.Debug("we're in an instance. aborting check.")
             return;
         end
     end
@@ -148,7 +149,7 @@ function MountSpy.ShowHelp()
 end
 
 function MountSpy.ReceiveCommand(msg, ...)
-    -- MountSpy.Debug(msg, MountSpy.DebugMode);
+    -- MountSpy.Debug(msg, MountSpyDebugMode);
 
     msg = strtrim(msg);
 
@@ -174,8 +175,18 @@ function MountSpy.ReceiveCommand(msg, ...)
         MountSpy.ToggleDebugMode();
     elseif msg == "quiet" then
         MountSpy.ToggleQuietMode();
-    elseif msg == "ignoreself" then
+    elseif msg == "self" then
         MountSpy.ToggleIgnoreSelf();
+    elseif msg == "instance" then
+        MountSpy.ToggleDisableInInstances();
+    elseif msg == "bg" then
+        MountSpy.ToggleDisableInBattlegrounds();
+    elseif msg == "arena" then
+        MountSpy.ToggleDisableInArenas();
+    elseif msg == "combat" then
+        MountSpy.ToggleDisableInCombat();
+    elseif msg == "shapeshift" then
+        MountSpy.ToggleIgnoreShapeshifts();
     elseif string.find(msg, "setwindow ") and string.find(msg, "setwindow ") > 0 then
         MountSpy.ChatFrameLooper();
         -- MountSpy.SetChatFrameName(msg);

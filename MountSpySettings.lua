@@ -47,11 +47,11 @@ end
 function MountSpy.ToggleDebugMode()
     local debugStatusText = "off";
 
-    if not MountSpy.DebugMode then
-        MountSpy.DebugMode = true;
+    if not MountSpyDebugMode then
+        MountSpyDebugMode = true;
         debugStatusText = "on";
     else
-        MountSpy.DebugMode = false;
+        MountSpyDebugMode = false;
     end
 
     print("MountSpy debugging is now " .. debugStatusText .. ".");
@@ -64,6 +64,66 @@ function MountSpy.ToggleQuietMode()
     else
         MountSpySuppressLoadingMessages = false;
         MountSpy.Print("Startup messages enabled.");
+    end
+end
+
+function MountSpy.ToggleDisableInInstances()
+    MountSpyDisableInInstances = not MountSpyDisableInInstances;
+
+    if MountSpyDisableInInstances then
+        MountSpy.Print("...now Disabled in Instances.");
+    else
+        MountSpy.Print("...now Enabled in Instances.");
+    end
+end
+
+function MountSpy.ToggleDisableInBattlegrounds()
+    MountSpyDisableInBattlegrounds = not MountSpyDisableInBattlegrounds;
+
+    if MountSpyDisableInBattlegrounds then
+        MountSpy.Print("...now Disabled in Battlegrounds.");
+    else
+        MountSpy.Print("...now Enabled in Battlegrounds.");
+    end
+end
+
+function MountSpy.ToggleDisableInArenas()
+    MountSpyDisableInArenas = not MountSpyDisableInArenas;
+
+    if MountSpyDisableInArenas then
+        MountSpy.Print("...now Disabled in Arenas.");
+    else
+        MountSpy.Print("...now Enabled in Arenas.");
+    end
+end
+
+function MountSpy.ToggleDisableInCombat()
+    MountSpyDisableInCombat = not MountSpyDisableInCombat;
+
+    if MountSpyDisableInCombat then
+        MountSpy.Print("...now Disabled in Combat.");
+    else
+        MountSpy.Print("...now Enabled in Combat.");
+    end
+end
+
+function MountSpy.ToggleIgnoreShapeshifts()
+    MountSpyIgnoreShapeshifts = not MountSpyIgnoreShapeshifts;
+
+    if MountSpyIgnoreShapeshifts then
+        MountSpy.Print("...now ignoring player travel shapeshifts.");
+    else
+        MountSpy.Print("...will display player travel shapeshifts.");
+    end
+end
+
+function MountSpy.ToggleIgnoreSelf()
+    MountSpyIgnoreSelf = not MountSpyIgnoreSelf;
+
+    if MountSpyIgnoreSelf then
+        MountSpy.Print("...ignoring clicks on yourself.");
+    else
+        MountSpy.Print("...automatic mode will react to clicks on yourself.");
     end
 end
 
@@ -90,10 +150,6 @@ function MountSpy.PrintCurrentStatus()
 end
 
 function MountSpy.SayVariables()
-    MountSpy.Print("MountSpyHidden:", MountSpyHidden, "MountSpy.DebugMode:", MountSpy.DebugMode, "MountSpyAutomaticMode:", MountSpyAutomaticMode);
+    MountSpy.Print("hidden:", MountSpyHidden, ",debugmode:", MountSpyDebugMode, ",automatic:", MountSpyAutomaticMode, ",disabled in bg:", MountSpyDisableInBattlegrounds, ",disabled in arenas:", MountSpyDisableInArenas, ",disabled in combat:", MountSpyDisableInCombat, ",disabled in instances:", MountSpyDisableInInstances, ",ignore self:", MountSpyIgnoreSelf, ",ignore shapeshifts:", MountSpyIgnoreShapeshifts, ",chat frame:", MountSpyChatFrameName);
 end
 
-function MountSpy.ToggleIgnoreSelf()
-    MountSpyIgnoreSelf = not MountSpyIgnoreSelf;
-    MountSpy.Print("IgnoreSelf set to", MountSpyIgnoreSelf);
-end
