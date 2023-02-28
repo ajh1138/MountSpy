@@ -4,7 +4,7 @@ local _, MountSpy = ...;
 local PrefixHexColor = "2B98FF";
 
 MountSpy.Props = {
-    Version = "10.00.05-03",
+    Version = "10.00.05-04",
     PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r",
     LegionMountIds = {}
 }
@@ -75,11 +75,9 @@ function MountSpy:Init()
         MountSpy.Print("MountSpy", MountSpy.Version, "is loading.");
     end
 
-    MountSpy.Debug("init. ", "auto:", MountSpyAutomaticMode, "debug:", MountSpyDebugMode, "hidden:", MountSpyHidden);
-
     MountSpy_ActiveModeCheckButton:SetChecked(MountSpyAutomaticMode);
 
-    if MountSpyHidden then
+    if MountSpyHidden and not MountSpyAlwaysShowOnStartup then
         MountSpy.HideUI();
     end
 
@@ -198,6 +196,8 @@ function MountSpy.ReceiveCommand(msg, ...)
         MountSpy.ToggleDisableInCombat();
     elseif msg == "shapeshift" then
         MountSpy.ToggleIgnoreShapeshifts();
+    elseif msg == "showonstartup" then
+        MountSpy.ToggleAlwaysShowOnStartup();
     elseif string.find(msg, "setwindow ") and string.find(msg, "setwindow ") > 0 then
         MountSpy.ChatFrameLooper();
         -- MountSpy.SetChatFrameName(msg);

@@ -17,6 +17,10 @@ function MountSpy:InitSavedVariables()
         MountSpyDebugMode = false;
     end
 
+    if MountSpyAlwaysShowOnStartup == nil then
+        MountSpyAlwaysShowOnStartup = false;
+    end
+
     if MountSpyDisableInCombat == nil then
         MountSpyDisableInCombat = true;
     end
@@ -124,6 +128,16 @@ function MountSpy.ToggleIgnoreSelf()
         MountSpy.Print("...ignoring clicks on yourself.");
     else
         MountSpy.Print("...automatic mode will react to clicks on yourself.");
+    end
+end
+
+function MountSpy.ToggleAlwaysShowOnStartup()
+    MountSpyAlwaysShowOnStartup = not MountSpyAlwaysShowOnStartup;
+
+    if MountSpyAlwaysShowOnStartup then
+        MountSpy.Print("...'always show window on startup' is turned on.");
+    else
+        MountSpy.Print("...'always show window on startup' is turned off.");
     end
 end
 
