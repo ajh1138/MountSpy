@@ -1,7 +1,7 @@
 local _, MountSpy = ...;
 
 function MountSpy.LoadMountIdList()
-    MountSpy.Props.LegionMountIds = C_MountJournal.GetMountIDs();
+    MountSpy.LegionMountIds = C_MountJournal.GetMountIDs();
 end
 
 function MountSpy.GetTargetMountData()
@@ -61,8 +61,8 @@ end
 function MountSpy.GetMountInfoBySpellId(spellId)
     local mountInfo = nil;
 
-    for i, v in ipairs(MountSpy.Props.LegionMountIds) do
-        local thisMountId = tonumber(MountSpy.Props.LegionMountIds[i]);
+    for i, v in ipairs(MountSpy.LegionMountIds) do
+        local thisMountId = tonumber(MountSpy.LegionMountIds[i]);
         local creatureName, blehSpellId, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, blorp = C_MountJournal.GetMountInfoByID(thisMountId);
         local thisTest = {mountId = thisMountId, creatureName = creatureName, collected = isCollected, index = i, spellId = blehSpellId};
 

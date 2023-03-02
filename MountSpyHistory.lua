@@ -6,7 +6,7 @@ function MountSpy.ShowHistory()
     if MountSpyHistoryTable ~= nil and #MountSpyHistoryTable > 0 then
         MountSpy.Print("History:");
         for _, value in pairs(MountSpyHistoryTable) do
-            print(" - ", value);
+            MountSpy.Print(" - ", value);
         end
     else
         MountSpy.Print("History is empty.");

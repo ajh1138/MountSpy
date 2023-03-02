@@ -3,12 +3,9 @@ local _, MountSpy = ...;
 
 local PrefixHexColor = "2B98FF";
 
-MountSpy.Props = {
-    Version = "10.00.05-04",
-    PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r",
-    LegionMountIds = {}
-}
-
+MountSpy.Version = "10.00.05-05";
+MountSpy.PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r";
+MountSpy.LegionMountIds = {};
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999;
 MountSpy.MAXIMUM_BUFF_COUNT = 20;
 
@@ -29,7 +26,7 @@ function MountSpy.Print(msg, ...)
     end
 
     local ChatFrameRef = _G[MountSpyChatFrameName];
-    ChatFrameRef:AddMessage(MountSpy.Props.PrintPrefix .. msgConcat);
+    ChatFrameRef:AddMessage(MountSpy.PrintPrefix .. msgConcat);
 end
 
 function MountSpy.ValidateAndTell()
@@ -68,8 +65,8 @@ function MountSpy.IsThisADruidForm(creatureName)
     end
 end
 
-function MountSpy:Init()
-    MountSpy:InitSavedVariables();
+function MountSpy.Init()
+    MountSpy.InitSavedVariables();
 
     if not MountSpySuppressLoadingMessages then
         MountSpy.Print("MountSpy", MountSpy.Version, "is loading.");
@@ -177,7 +174,7 @@ function MountSpy.ReceiveCommand(msg, ...)
     elseif msg == "match" then
         MountSpy.MatchMount();
     elseif msg == "version" then
-        MountSpy.Print("version", MountSpy.Props.Version);
+        MountSpy.Print("version", MountSpy.Version);
     elseif msg == "vars" then
         MountSpy.SayVariables();
     elseif msg == "debug" then
@@ -220,9 +217,7 @@ function MountSpy_OnEvent(self, eventName, ...)
     if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
         self:RegisterEvent("PLAYER_TARGET_CHANGED");
         self:RegisterEvent("VARIABLES_LOADED");
-
-        MountSpy.Print("calling init.");
-        MountSpy:Init();
+        MountSpy.Init();
     end
 
     if eventName == "PLAYER_LOGIN" then

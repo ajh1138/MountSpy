@@ -1,8 +1,12 @@
 local _, MountSpy = ...;
 
-function MountSpy:InitSavedVariables()
+function MountSpy.InitSavedVariables()
     if MountSpyChatFrameName == nil then
         MountSpyChatFrameName = "DEFAULT_CHAT_FRAME";
+    end
+
+    if MountSpySuppressLoadingMessages == nil then
+        MountSpySuppressLoadingMessages = false;
     end
 
     if MountSpyAutomaticMode == nil then
@@ -44,8 +48,6 @@ function MountSpy:InitSavedVariables()
     if MountSpyIgnoreShapeshifts == nil then
         MountSpyIgnoreShapeshifts = true;
     end
-
-    MountSpy.Debug("acct vars done.")
 end
 
 function MountSpy.ToggleDebugMode()
