@@ -1,7 +1,7 @@
 ## Interface: 100007
 ## Title: Mount Spy
 ## Author: ajh1138
-## Version: 10.00.07-01
+## Version: 10.00.07-02
 ## Notes: "Tells you what mount a player is riding and where to get it."
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
@@ -14,4 +14,5 @@ MountSpyMountOps.lua
 MountSpySettings.lua
 MountSpyData.lua
 MountSpyMisc.lua
+MountSpySettingsUI.lua
 MountSpy.xml
