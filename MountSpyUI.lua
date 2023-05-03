@@ -15,11 +15,13 @@ end
 function MountSpy.ShowUI(msg, editbox)
     MountSpy_MainFrame:Show();
     MountSpyHidden = false;
+    MountSpy.UpdateSettingControl("MountSpyHidden");
 end
 
 function MountSpy.HideUI(msg, editbox)
     MountSpy_MainFrame:Hide();
     MountSpyHidden = true;
+    MountSpy.UpdateSettingControl("MountSpyHidden");
 end
 
 function MountSpy.SetAutoModeDisplay()
@@ -36,6 +38,8 @@ function MountSpy_ActiveModeCheckButtonClick()
     if MountSpyAutomaticMode then
         MountSpy.ValidateAndTell();
     end
+
+    MountSpy.UpdateSettingControl("MountSpyAutomaticMode");
 end
 
 function MountSpy_OnLoad(frame)
@@ -44,6 +48,7 @@ end
 
 function MountSpy_OnHide()
     MountSpyHidden = true;
+    MountSpy.UpdateSettingControl("MountSpyHidden");
 end
 
 function MountSpy_MatchMountButtonClick()

@@ -1,5 +1,8 @@
 local _, MountSpy = ...;
 
+-- TODO: put config settings in a table with defaults already setup.
+-- TODO: make this whole file more DRY. (loop through the table)
+
 function MountSpy.InitSavedVariables()
     if MountSpyChatFrameName == nil then
         MountSpyChatFrameName = "DEFAULT_CHAT_FRAME";
@@ -71,6 +74,8 @@ function MountSpy.ToggleQuietMode()
         MountSpySuppressLoadingMessages = false;
         MountSpy.Print("Startup messages enabled.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpySuppressLoadingMessages");
 end
 
 function MountSpy.ToggleDisableInInstances()
@@ -81,6 +86,8 @@ function MountSpy.ToggleDisableInInstances()
     else
         MountSpy.Print("...now Enabled in Instances.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyDisableInInstances");
 end
 
 function MountSpy.ToggleDisableInBattlegrounds()
@@ -91,6 +98,8 @@ function MountSpy.ToggleDisableInBattlegrounds()
     else
         MountSpy.Print("...now Enabled in Battlegrounds.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyDisableInBattlegrounds");
 end
 
 function MountSpy.ToggleDisableInArenas()
@@ -101,6 +110,8 @@ function MountSpy.ToggleDisableInArenas()
     else
         MountSpy.Print("...now Enabled in Arenas.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyDisableInArenas");
 end
 
 function MountSpy.ToggleDisableInCombat()
@@ -111,6 +122,8 @@ function MountSpy.ToggleDisableInCombat()
     else
         MountSpy.Print("...now Enabled in Combat.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyDisableInCombat");
 end
 
 function MountSpy.ToggleIgnoreShapeshifts()
@@ -121,6 +134,8 @@ function MountSpy.ToggleIgnoreShapeshifts()
     else
         MountSpy.Print("...will display player travel shapeshifts.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyIgnoreShapeshifts");
 end
 
 function MountSpy.ToggleIgnoreSelf()
@@ -131,6 +146,8 @@ function MountSpy.ToggleIgnoreSelf()
     else
         MountSpy.Print("...automatic mode will react to clicks on yourself.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyIgnoreSelf");
 end
 
 function MountSpy.ToggleAlwaysShowOnStartup()
@@ -141,6 +158,8 @@ function MountSpy.ToggleAlwaysShowOnStartup()
     else
         MountSpy.Print("...'always show window on startup' is turned off.");
     end
+
+    MountSpy.UpdateSettingControl("MountSpyAlwaysShowOnStartup");
 end
 
 function MountSpy.SetChatFrameName(msg)
