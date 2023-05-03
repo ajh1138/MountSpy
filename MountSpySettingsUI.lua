@@ -5,8 +5,9 @@ MountSpy.SettingsControls = {};
 function MountSpy.RegisterSettingsUI()
 	local category, layout = Settings.RegisterVerticalLayoutCategory("MountSpy");
 
-	MountSpy.AddSettingCheckbox(category, "Automatic Mode", "MountSpyAutomaticMode", true, MountSpyAutomaticMode, "Show mount info automatically when selecting a mounted player.");
-	
+	local automaticSetting = MountSpy.AddSettingCheckbox(category, "Automatic Mode", "MountSpyAutomaticMode", true, MountSpyAutomaticMode, "Show mount info automatically when selecting a mounted player.");
+	MountSpy.OnAutomaticModeSettingChange(automaticSetting);
+
 	local windowSetting = MountSpy.AddSettingCheckbox(category, "Hide Mount Spy window", "MountSpyHidden", true, MountSpyHidden, "Hide the Mount Spy window.");
 	MountSpy.OnWindowVisibilitySettingChange(windowSetting);
 
@@ -29,12 +30,20 @@ function MountSpy.AddSettingCheckbox(category, controlLabel, settingVariableName
 	Settings.CreateCheckBox(category, setting, tooltip);
 
 	MountSpy.SettingsControls[settingVariableName] = setting;
-	print("settings len:", #MountSpy.SettingsControls);
+
 	return setting;
 end
 
 function MountSpy.DoSettingsRegistration()
 	SettingsRegistrar:AddRegistrant(MountSpy.RegisterSettingsUI);
+end
+
+function MountSpy.UpdateSettingControl(settingVariableName)
+	if tablelength(MountSpy.SettingsControls) > 0 then
+		if MountSpy.SettingsControls[settingVariableName] ~= nil then
+			MountSpy.SettingsControls[settingVariableName]:SetValue(_G[settingVariableName], false);
+		end
+	end
 end
 
 function MountSpy.OnWindowVisibilitySettingChange(setting)
@@ -51,10 +60,19 @@ function MountSpy.OnWindowVisibilitySettingChange(setting)
 	);
 end
 
-function MountSpy.UpdateSettingControl(settingVariableName)
-	if #MountSpy.SettingsControls > 0 then
-		if MountSpy.SettingsControls[settingVariableName] ~= nil then
-			MountSpy.SettingsControls[settingVariableName]:SetValue(_G[settingVariableName], false);
+function MountSpy.OnAutomaticModeSettingChange(setting)
+	Settings.SetOnValueChangedCallback("MountSpyAutomaticMode",
+		function(event)
+			_G["MountSpyAutomaticMode"] = setting:GetValue();
+		
+			MountSpy_ActiveModeCheckButton:SetChecked(MountSpyAutomaticMode);
 		end
-	end
+	);
+end
+
+-- because Lua sucks...(# operator isn't reliable)
+function tablelength(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
 end
