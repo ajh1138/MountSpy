@@ -3,7 +3,7 @@ local _, MountSpy = ...
 
 local PrefixHexColor = "2B98FF"
 
-MountSpy.Version = "10.01.05-01"
+MountSpy.Version = "10.01.05-02"
 MountSpy.PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r"
 MountSpy.LegionMountIds = {}
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999
@@ -94,10 +94,6 @@ function MountSpy.OnPlayerTargetChanged()
     local isValidTarget = MountSpy.CheckForValidTarget()
     local targetId = UnitGUID("target")
     local playerId = UnitGUID("player")
-    local bgNum = UnitInBattleground("player")
-    MountSpy.Debug("battleground number:" .. tostring(bgNum))
-    local playerIsInBattleground = not (bgNum == nil)
-    MountSpy.Debug("playerIsInBattleground:" .. tostring(playerIsInBattleground))
 
     if not isValidTarget then
         return
@@ -106,6 +102,11 @@ function MountSpy.OnPlayerTargetChanged()
     if targetId == nil then
         return
     end
+
+    local bgNum = UnitInBattleground("player")
+    MountSpy.Debug("battleground number:" .. tostring(bgNum))
+    local playerIsInBattleground = (bgNum ~= nil)
+    MountSpy.Debug("playerIsInBattleground:" .. tostring(playerIsInBattleground))
 
     if MountSpyIgnoreSelf then
         if targetId == playerId then
@@ -123,7 +124,7 @@ function MountSpy.OnPlayerTargetChanged()
 
     MountSpy.Debug("MountSpyDisableInBattlegrounds: " .. tostring(MountSpyDisableInBattlegrounds))
     if MountSpyDisableInBattlegrounds then
-        if playerIsInBattleground ~= nil then
+        if playerIsInBattleground == true then
             MountSpy.Debug("...currently disabled in battlegrounds.")
             return
         end
@@ -139,7 +140,7 @@ function MountSpy.OnPlayerTargetChanged()
 
     -- A battleground is an instance, but not the kind of instance we want to skip if DisableInBattlegrounds is false.
     if MountSpyDisableInInstances then
-        if not MountSpyDisableInBattlegrounds and playerIsInBattleground then
+        if MountSpyDisableInBattlegrounds ~= true and playerIsInBattleground then
             MountSpy.Debug("...not disabled in bg, and you're in a bg, so you should see the dataz.")
         else
             local instanceName, instanceType = GetInstanceInfo()
