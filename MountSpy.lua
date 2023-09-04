@@ -3,7 +3,7 @@ local _, MountSpy = ...
 
 local PrefixHexColor = "2B98FF"
 
-MountSpy.Version = "10.01.05-02"
+MountSpy.Version = "10.01.07-01"
 MountSpy.PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r"
 MountSpy.LegionMountIds = {}
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999
