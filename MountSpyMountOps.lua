@@ -108,7 +108,7 @@ function MountSpy.AttemptToMount(targetMountData)
 end
 
 function MountSpy.MakeMountChatLink(targetMountData)
-    local linkText = GetSpellLink(targetMountData.spellId);
+    local linkText = C_Spell.GetSpellLink(targetMountData.spellId);
 
     local skipExtraInfoCheck = MountSpy.CheckForNonMountBuffs(targetMountData);
 
