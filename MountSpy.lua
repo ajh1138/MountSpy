@@ -3,7 +3,7 @@ local _, MountSpy = ...
 
 local PrefixHexColor = "2B98FF"
 
-MountSpy.Version = GetAddOnMetadata("MountSpy","Version")
+MountSpy.Version = C_AddOns.GetAddOnMetadata("MountSpy","Version")
 MountSpy.PrintPrefix = "|cFF" .. PrefixHexColor .. "Mount Spy:|r"
 MountSpy.LegionMountIds = {}
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999
@@ -77,7 +77,7 @@ function MountSpy.Init()
         MountSpy.HideUI()
     end
 
-    MountSpy.DoSettingsRegistration()
+  --  MountSpy.DoSettingsRegistration()
 
     C_Timer.After(6, MountSpy.SetAutoModeDisplay)
 

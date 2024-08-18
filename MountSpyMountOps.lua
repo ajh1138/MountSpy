@@ -23,18 +23,24 @@ function MountSpy.GetTargetMountData()
     -- iterate through target's buffs to see if any of them are mounts.
     local spellIterator = 1;
 
-    while true do
-        local spellName, _, _, _, _, _, _, _, _, spellId = UnitBuff("target", spellIterator);
+    local isIterating = true;
 
-        -- MountSpy.Debug("iterator:", spellIterator, "spell name:", spellName, "spell id:", spellId);
+    while isIterating do
+        local spellInfo = C_UnitAuras.GetBuffDataByIndex("target", spellIterator);
 
-        if not spellName then
+        -- MountSpy.Debug("iterator:", spellIterator, "spell name:", spellInfo.name, "spell id:", spellInfo.spellId);
+        
+        if not spellInfo then
+            MountSpy.Debug("spellInfo is nil");
             break
         end
 
+        local spellName = spellInfo.name;
+        local spellId = spellInfo.spellId;
+
         spellIterator = spellIterator + 1;
 
-        local testForMount = MountSpy.GetMountInfoBySpellId(spellId);
+        local testForMount = MountSpy.GetMountInfoBySpellId(spellInfo.spellId);
 
         if testForMount ~= nil then
             targetMountData = testForMount;
@@ -44,10 +50,12 @@ function MountSpy.GetTargetMountData()
                 -- Check for Travel Form, etc.
                 if MountSpy.IsThisADruidForm(spellName) then
                     targetMountData = {creatureName = spellName, spellId = MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID};
+                    isIterating = false;
                     break
                 else
                     if spellName == "Tarecgosa's Visage" then
                         targetMountData = {creatureName = spellName, spellId = MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID};
+                        isIterating = false;
                         break
                     end
                 end

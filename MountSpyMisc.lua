@@ -27,7 +27,7 @@ function MountSpy.GetTargetBuffCount()
     local buffCount = 0
 
     while true do
-        local spellName = UnitBuff("target", buffCount + 1)
+        local spellName = C_UnitAuras.GetBuffDataByIndex("target", buffCount + 1)
 
         if not spellName then
             break

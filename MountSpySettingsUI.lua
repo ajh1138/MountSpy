@@ -1,4 +1,5 @@
 local _, MountSpy = ...
+local settingsTbl = {};
 
 MountSpy.SettingsControls = {}
 
@@ -96,8 +97,13 @@ function MountSpy.RegisterSettingsUI()
 end
 
 function MountSpy.AddSettingCheckbox(category, controlLabel, settingVariableName, defaultValue, currentValue, tooltip)
+	local variableKey = settingVariableName .. "_Key";
+
 	local setting =
-		Settings.RegisterAddOnSetting(category, controlLabel, settingVariableName, type(defaultValue), currentValue)
+		-- old Settings.RegisterAddOnSetting(category, controlLabel, settingVariableName, type(defaultValue), currentValue)
+
+		-- new one...		
+		Settings.RegisterAddOnSetting(category, settingVariableName, variableKey, settingsTbl, type(defaultValue), settingVariableName, defaultValue)
 
 	Settings.SetOnValueChangedCallback(
 		settingVariableName,
