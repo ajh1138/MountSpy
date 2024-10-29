@@ -211,6 +211,8 @@ function MountSpy.ReceiveCommand(msg, ...)
         MountSpy.ToggleIgnoreShapeshifts()
     elseif msg == "showonstartup" then
         MountSpy.ToggleAlwaysShowOnStartup()
+    elseif msg == "npcs" then
+        MountSpy.ToggleIgnoreNpcs();
     elseif string.find(msg, "setwindow ") and string.find(msg, "setwindow ") > 0 then
         -- MountSpy.SetChatFrameName(msg);
         MountSpy.ChatFrameLooper()

@@ -84,13 +84,16 @@ function MountSpy.CheckForValidTarget()
         return false
     end
 
-    -- is target a player?
-    if isValidTarget then
+    -- if "MountSpyIgnoreNPCs" is true, ensure that the target is a player...
+    if isValidTarget and MountSpyIgnoreNPCs then
+        
         local isPlayerCharacter = UnitIsPlayer("target")
         if not isPlayerCharacter then
             isValidTarget = false
         end
     end
+    
+    MountSpy.Debug("valid target? " .. tostring(isValidTarget));
 
     return isValidTarget
 end

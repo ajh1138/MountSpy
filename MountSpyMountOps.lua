@@ -112,7 +112,10 @@ function MountSpy.AttemptToMount(targetMountData)
         if safeToProceed and alreadyMountedOnMatch ~= true then
             C_MountJournal.SummonByID(targetMountData.mountId);
         end -- end of proceed check
+    else
+        MountSpy.CheckAndShowTargetMountInfo();
     end
+
 end
 
 function MountSpy.MakeMountChatLink(targetMountData)
@@ -229,13 +232,14 @@ function MountSpy.CheckAndShowTargetMountInfo()
 
         local targetLinkString = MountSpy.MakeTargetLinkString();
 
-        if not UnitIsPlayer("target") then
-            MountSpy.Print(targetLinkString, "is not a player character.")
-        else
-            local targetMountData = MountSpy.GetTargetMountData();
-            if not targetMountData then
-                MountSpy.Print(targetLinkString, "is not mounted.");
-            end
+        if not UnitIsPlayer("target") and MountSpyIgnoreNPCs then
+            MountSpy.Print(targetLinkString, "is not a player character. Use '/mountspy npcs' to toggle the NPC setting.")
+            return;
+        end
+        
+        local targetMountData = MountSpy.GetTargetMountData();
+        if not targetMountData then
+            MountSpy.Print(targetLinkString, "is not mounted.");
         end
     else
         MountSpy.Print("No target selected.");
