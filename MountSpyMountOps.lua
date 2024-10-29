@@ -235,7 +235,7 @@ function MountSpy.CheckAndShowTargetMountInfo()
 
         local targetName = UnitName("target");
 
-        if not UnitIsPlayer("target") or targetName ~= "Abigail Cyrildotr" then
+        if not UnitIsPlayer("target") and targetName ~= "Abigail Cyrildotr" then
             MountSpy.Print(targetLinkString, "is not a player character.")
             return;
         end
