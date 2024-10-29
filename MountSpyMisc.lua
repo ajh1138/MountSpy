@@ -84,11 +84,11 @@ function MountSpy.CheckForValidTarget()
         return false
     end
 
-    -- if "MountSpyIgnoreNPCs" is true, ensure that the target is a player...
-    if isValidTarget and MountSpyIgnoreNPCs then
-        
+    -- ensure that the target is a player or is the MountMania host...
+    MountSpy.Debug("target name:", targetName);
+    if isValidTarget then        
         local isPlayerCharacter = UnitIsPlayer("target")
-        if not isPlayerCharacter then
+        if not isPlayerCharacter and targetName ~= "Abigail Cyrildotr" then
             isValidTarget = false
         end
     end

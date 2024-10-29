@@ -224,7 +224,8 @@ function MountSpy.TellTargetMountInfo(targetName, targetMountData)
 end
 
 function MountSpy.CheckAndShowTargetMountInfo()
-    -- Note: more steps than an automatic mode target change.
+    -- Note:    more steps than an automatic mode target change.
+    --          Yes, I know I need to refactor this.
     local aTargetIsSelected = MountSpy.CheckForASelectedTarget();
 
     if aTargetIsSelected then
@@ -232,8 +233,10 @@ function MountSpy.CheckAndShowTargetMountInfo()
 
         local targetLinkString = MountSpy.MakeTargetLinkString();
 
-        if not UnitIsPlayer("target") and MountSpyIgnoreNPCs then
-            MountSpy.Print(targetLinkString, "is not a player character. Use '/mountspy npcs' to toggle the NPC setting.")
+        local targetName = UnitName("target");
+
+        if not UnitIsPlayer("target") or targetName ~= "Abigail Cyrildotr" then
+            MountSpy.Print(targetLinkString, "is not a player character.")
             return;
         end
         

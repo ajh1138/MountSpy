@@ -6,7 +6,7 @@
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
 ## X-Curse-Project-ID: 102325
-## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode, MountSpySuppressLoadingMessages, MountSpyHistoryTable, MountSpyChatFrameName, MountSpyDisableInBattlegrounds, MountSpyDisableInCombat, MountSpyDisableInArenas, MountSpyDisableInInstances, MountSpyIgnoreSelf, MountSpyIgnoreShapeshifts, MountSpyAlwaysShowOnStartup, MountSpyIgnoreNPCs
+## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode, MountSpySuppressLoadingMessages, MountSpyHistoryTable, MountSpyChatFrameName, MountSpyDisableInBattlegrounds, MountSpyDisableInCombat, MountSpyDisableInArenas, MountSpyDisableInInstances, MountSpyIgnoreSelf, MountSpyIgnoreShapeshifts, MountSpyAlwaysShowOnStartup
 MountSpy.lua
 MountSpyHistory.lua
 MountSpyUI.lua

@@ -52,11 +52,6 @@ function MountSpy.InitSavedVariables()
     if MountSpyIgnoreShapeshifts == nil then
         MountSpyIgnoreShapeshifts = true
     end
-
-    if MountSpyIgnoreNPCs == nil then
-        MountSpy.Debug("init: setting MountSpyIgnoreNPCs to true.");
-        MountSpyIgnoreNPCs = true;
-    end
 end
 
 function MountSpy.ToggleDebugMode()
@@ -168,15 +163,6 @@ function MountSpy.ToggleAlwaysShowOnStartup()
     MountSpy.UpdateSettingControl("MountSpyAlwaysShowOnStartup")
 end
 
-function MountSpy.ToggleIgnoreNpcs()
-    MountSpyIgnoreNPCs = not MountSpyIgnoreNPCs;
-    if MountSpyIgnoreNPCs then
-        MountSpy.Print("...ignoring NPCs.");
-    else    
-        MountSpy.Print("...including NPCs in mount check.");
-    end
-end
-
 function MountSpy.SetChatFrameName(msg)
     local frameName = gsub(msg, "setwindow ", "")
     MountSpy.Debug("frame name -" .. frameName .. "-")
@@ -220,8 +206,6 @@ function MountSpy.SayVariables()
         ", ignore shapeshifts:",
         MountSpyIgnoreShapeshifts,
         ", chat frame:",
-        MountSpyChatFrameName,
-        ", ignore NPCs:",
-        MountSpyIgnoreNPCs
+        MountSpyChatFrameName
     )
 end
