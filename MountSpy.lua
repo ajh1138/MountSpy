@@ -161,6 +161,7 @@ function MountSpy.ShowHelp()
         "commands:\n",
         "show - Shows the UI\n",
         "hide - Hides the UI\n",
+        "toggle - Toggles the UI visibility\n",
         "getinfo - Gets info about the targeted player's mount\n",
         "match - Attempts to put you on a mount that matches the target's mount\n",
         "quiet - Toggles the messages displayed at login\n",
@@ -174,6 +175,14 @@ function MountSpy.ReceiveCommand(msg, ...)
     -- MountSpy.Debug(msg, MountSpyDebugMode);
 
     msg = strtrim(msg)
+
+    if msg == "toggle" then
+        if  MountSpyHidden then
+            msg = "show"
+        else
+            msg = "hide"
+        end
+    end
 
     if msg == nil or msg == "" or msg == "show" then
         MountSpy.ShowUI()
