@@ -2,6 +2,7 @@ local _, MountSpy = ...;
 
 function MountSpy.LoadMountIdList()
     MountSpy.LegionMountIds = C_MountJournal.GetMountIDs();
+    MountSpy.Debug("Loaded mount IDs.");
 end
 
 function MountSpy.GetTargetMountData(unit)

@@ -84,9 +84,9 @@ function MountSpy.Init()
 
     C_Timer.After(6, MountSpy.SetAutoModeDisplay)
 
-    C_Timer.After(10, MountSpy.LoadMountIdList)
+    C_Timer.After(2, MountSpy.LoadMountIdList)
 
-    C_Timer.After(15, MountSpy.PrintCurrentStatus)
+    C_Timer.After(3, MountSpy.PrintCurrentStatus)
 end
 
 function MountSpy.OnPlayerTargetChanged()
