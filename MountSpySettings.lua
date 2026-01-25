@@ -52,6 +52,11 @@ function MountSpy.InitSavedVariables()
     if MountSpyIgnoreShapeshifts == nil then
         MountSpyIgnoreShapeshifts = true
     end
+
+    if MountSpyDisplayMountNameOnMountEvent == nil then
+        MountSpy.Debug("disabling display mount name on mount event by default.")
+        MountSpyDisplayMountNameOnMountEvent = false
+    end
 end
 
 function MountSpy.ToggleDebugMode()
@@ -163,6 +168,18 @@ function MountSpy.ToggleAlwaysShowOnStartup()
     MountSpy.UpdateSettingControl("MountSpyAlwaysShowOnStartup")
 end
 
+function MountSpy.ToggleDisplayMountNameOnMountEvent()
+    MountSpyDisplayMountNameOnMountEvent = not MountSpyDisplayMountNameOnMountEvent
+
+    if MountSpyDisplayMountNameOnMountEvent then
+        MountSpy.Print("...now displaying mount name when you mount.")
+    else
+        MountSpy.Print("...no longer displaying mount name when you mount.")
+    end
+
+    MountSpy.UpdateSettingControl("MountSpyDisplayMountNameOnMountEvent")
+end
+
 function MountSpy.SetChatFrameName(msg)
     local frameName = gsub(msg, "setwindow ", "")
     MountSpy.Debug("frame name -" .. frameName .. "-")
@@ -206,6 +223,8 @@ function MountSpy.SayVariables()
         ", ignore shapeshifts:",
         MountSpyIgnoreShapeshifts,
         ", chat frame:",
-        MountSpyChatFrameName
+        MountSpyChatFrameName, 
+        ", display mount name on mount event:",
+        MountSpyDisplayMountNameOnMountEvent
     )
 end

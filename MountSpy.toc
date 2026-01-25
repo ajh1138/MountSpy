@@ -1,4 +1,4 @@
-## Interface: 110207,120000,120001
+## Interface: 120000,120001
 ## Title: Mount Spy
 ## Author: ajh1138
 ## Version: 12.00.01-03
@@ -7,7 +7,7 @@
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
 ## X-Curse-Project-ID: 102325
-## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode, MountSpySuppressLoadingMessages, MountSpyHistoryTable, MountSpyChatFrameName, MountSpyDisableInBattlegrounds, MountSpyDisableInCombat, MountSpyDisableInArenas, MountSpyDisableInInstances, MountSpyIgnoreSelf, MountSpyIgnoreShapeshifts, MountSpyAlwaysShowOnStartup
+## SavedVariables: MountSpyHidden, MountSpyAutomaticMode, MountSpyDebugMode, MountSpySuppressLoadingMessages, MountSpyHistoryTable, MountSpyChatFrameName, MountSpyDisableInBattlegrounds, MountSpyDisableInCombat, MountSpyDisableInArenas, MountSpyDisableInInstances, MountSpyIgnoreSelf, MountSpyIgnoreShapeshifts, MountSpyAlwaysShowOnStartup, MountSpyDisplayMountNameOnMountEvent
 MountSpy.lua
 MountSpyHistory.lua
 MountSpyUI.lua

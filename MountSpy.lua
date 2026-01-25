@@ -162,15 +162,16 @@ end
 function MountSpy.ShowHelp()
     MountSpy.Print(
         "commands:\n",
-        "show - Shows the UI\n",
+        "show - Shows the UI ... ",
         "hide - Hides the UI\n",
+        "onmounting - Toggles displaying the player's mount name when mounting\n",
+        "self - Toggles ignoring yourself as a target\n",
         "toggle - Toggles the UI visibility\n",
         "getinfo - Gets info about the targeted player's mount\n",
         "match - Attempts to put you on a mount that matches the target's mount\n",
         "quiet - Toggles the messages displayed at login\n",
         "history - Lists mounts that were spotted recently\n",
-        "clearhistory - Clears the mount history list\n",
-        "version - Displays the version number of this addon"
+        "clearhistory - Clears the mount history list\n"
     )
 end
 
@@ -223,6 +224,8 @@ function MountSpy.ReceiveCommand(msg, ...)
         MountSpy.ToggleIgnoreShapeshifts()
     elseif msg == "showonstartup" then
         MountSpy.ToggleAlwaysShowOnStartup()
+    elseif msg == "onmounting" then
+        MountSpy.ToggleDisplayMountNameOnMountEvent()
     elseif msg == "npcs" then
         MountSpy.ToggleIgnoreNpcs();
     elseif string.find(msg, "setwindow ") and string.find(msg, "setwindow ") > 0 then
@@ -244,7 +247,7 @@ function MountSpy_OnEvent(self, eventName, ...)
 
     if eventName == "PLAYER_MOUNT_DISPLAY_CHANGED" then
         MountSpy.Debug("mount display changed event fired.");
-        if IsMounted() then
+        if IsMounted() and MountSpyDisplayMountNameOnMountEvent then
             MountSpy.Debug("player is mounted.");
             MountSpy.DisplayPlayerMountName();
         end
