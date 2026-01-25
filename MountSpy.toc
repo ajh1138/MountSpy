@@ -1,8 +1,9 @@
-## Interface: 110207
+## Interface: 110207,120000,120001
 ## Title: Mount Spy
 ## Author: ajh1138
-## Version: 11.02.07-01
+## Version: 12.00.01-02
 ## Notes: "Tells you what mount a player is riding and where to get it."
+## IconTexture: Interface\Icons\inv_misc_head_dragon_01
 ## X-Category: Miscellaneous
 ## X-Website: https://www.curseforge.com/wow/addons/mountspy
 ## X-Curse-Project-ID: 102325

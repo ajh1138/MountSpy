@@ -77,6 +77,8 @@ end
 function MountSpy.CheckForValidTarget()
     local isValidTarget = true
 
+
+
     local targetName = UnitName("target")
 
     if not targetName then
@@ -85,7 +87,13 @@ function MountSpy.CheckForValidTarget()
     end
 
     -- ensure that the target is a player or is the MountMania host...
-    MountSpy.Debug("target name:", targetName);
+    if canaccessvalue(targetName) then
+        MountSpy.Debug("target name:", targetName);
+    else
+        isValidTarget = false;
+    end 
+   
+   
     if isValidTarget then        
         local isPlayerCharacter = UnitIsPlayer("target")
         if not isPlayerCharacter and targetName ~= "Abigail Cyrildotr" then
