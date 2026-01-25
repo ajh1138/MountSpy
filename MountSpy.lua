@@ -9,6 +9,9 @@ MountSpy.LegionMountIds = {}
 MountSpy.NOT_REALLY_A_MOUNT_SPELL_ID = 999999
 MountSpy.MAXIMUM_BUFF_COUNT = 20
 
+MountSpy.PlayerMountNameDisplayFrame = nil;
+MountSpy.PlayerMountNameDisplayFontString = nil;
+
 function MountSpy.Debug(...)
     if MountSpyDebugMode == false then
         return
@@ -34,7 +37,7 @@ function MountSpy.ValidateAndTell()
 
     if isValidTarget then
         local targetName = UnitName("target")
-        local targetMountData = MountSpy.GetTargetMountData()
+        local targetMountData = MountSpy.GetTargetMountData("target");
 
         MountSpy.TellTargetMountInfo(targetName, targetMountData)
     end
@@ -239,14 +242,19 @@ function MountSpy_OnEvent(self, eventName, ...)
         MountSpy.OnPlayerTargetChanged()
     end
 
+    if eventName == "PLAYER_MOUNT_DISPLAY_CHANGED" then
+        MountSpy.Debug("mount display changed event fired.");
+        if IsMounted() then
+            MountSpy.Debug("player is mounted.");
+            MountSpy.DisplayPlayerMountName();
+        end
+    end
+
     if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
         self:RegisterEvent("PLAYER_TARGET_CHANGED")
         self:RegisterEvent("VARIABLES_LOADED")
+        self:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
         MountSpy.Init()
-    end
-
-    if eventName == "PLAYER_LOGIN" then
-    -- nothing for now --
     end
 end
 

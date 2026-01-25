@@ -4,19 +4,21 @@ function MountSpy.LoadMountIdList()
     MountSpy.LegionMountIds = C_MountJournal.GetMountIDs();
 end
 
-function MountSpy.GetTargetMountData()
+function MountSpy.GetTargetMountData(unit)
     local targetMountData = nil;
-
-    local targetName, realmName = UnitName("target");
+    local targetName, realmName = UnitName(unit);
 
     if not targetName then
         MountSpy.Debug("no target.")
         return nil;
     end
 
-    local buffCount = MountSpy.GetTargetBuffCount();
+    local buffCount = MountSpy.GetTargetBuffCount(unit);
+
+    MountSpy.Debug("buff count for", targetName, "is", buffCount);
+    
     if buffCount > MountSpy.MAXIMUM_BUFF_COUNT then
-        MountSpy.Print("Target has too many active spells.");
+        MountSpy.Debug("Target has too many active spells.");
         return nil;
     end
 
@@ -26,9 +28,7 @@ function MountSpy.GetTargetMountData()
     local isIterating = true;
 
     while isIterating do
-        local spellInfo = C_UnitAuras.GetBuffDataByIndex("target", spellIterator);
-
-        -- MountSpy.Debug("iterator:", spellIterator, "spell name:", spellInfo.name, "spell id:", spellInfo.spellId);
+        local spellInfo = C_UnitAuras.GetBuffDataByIndex(unit, spellIterator);
         
         if not spellInfo then
             MountSpy.Debug("spellInfo is nil");
@@ -240,7 +240,7 @@ function MountSpy.CheckAndShowTargetMountInfo()
             return;
         end
         
-        local targetMountData = MountSpy.GetTargetMountData();
+        local targetMountData = MountSpy.GetTargetMountData("target");
         if not targetMountData then
             MountSpy.Print(targetLinkString, "is not mounted.");
         end
@@ -253,7 +253,7 @@ function MountSpy.MatchMount()
     local isValidTarget = MountSpy.CheckForValidTarget();
 
     if isValidTarget then
-        local targetMountData = MountSpy.GetTargetMountData();
+        local targetMountData = MountSpy.GetTargetMountData("target");
         MountSpy.AttemptToMount(targetMountData);
     end
 end
@@ -272,3 +272,4 @@ function MountSpy.IsAlreadyMountedOnMatch(targetMountId)
 
     return false;
 end
+

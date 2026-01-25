@@ -23,11 +23,11 @@ function MountSpy.TableIndexOf(table, element)
     return -1
 end
 
-function MountSpy.GetTargetBuffCount()
+function MountSpy.GetTargetBuffCount(unit)
     local buffCount = 0
 
     while true do
-        local spellName = C_UnitAuras.GetBuffDataByIndex("target", buffCount + 1)
+        local spellName = C_UnitAuras.GetBuffDataByIndex(unit, buffCount + 1)
 
         if not spellName then
             break
@@ -76,9 +76,6 @@ end
 
 function MountSpy.CheckForValidTarget()
     local isValidTarget = true
-
-
-
     local targetName = UnitName("target")
 
     if not targetName then
@@ -114,4 +111,38 @@ function MountSpy.ChatFrameLooper()
         end
         getglobal("ChatFrame" .. i):AddMessage("This is ChatFrame" .. i .. " aka " .. winName, 0, 0, 0, 0)
     end
+end
+
+function MountSpy.DisplayPlayerMountName()
+    local mountInfo = MountSpy.GetTargetMountData("player");
+    
+    if not mountInfo then
+        return;
+    end
+
+    local myMountId = mountInfo.mountId;     
+
+    if myMountId then
+        local creatureName = C_MountJournal.GetMountInfoByID(myMountId);
+
+        if creatureName then
+            if MountSpy.PlayerMountNameDisplayFrame == nil then
+                MountSpy.InitPlayerMountNameDisplayFrame();
+            end
+
+            MountSpy.PlayerMountNameDisplayFontString:SetText("Riding: " .. creatureName);
+            UIFrameFadeIn(MountSpy.PlayerMountNameDisplayFrame, 0.25, 0, 1);
+
+            C_Timer.After(3, function() UIFrameFadeOut(MountSpy.PlayerMountNameDisplayFrame, 3, 1, 0)  end);
+        end
+    end
+end
+
+function MountSpy.InitPlayerMountNameDisplayFrame()
+    MountSpy.PlayerMountNameDisplayFrame = CreateFrame("Frame", "MountSpyPlayerMountDisplayFrame", UIParent);
+    MountSpy.PlayerMountNameDisplayFrame:SetSize(200, 50);
+    MountSpy.PlayerMountNameDisplayFrame:SetPoint("TOP", UIParent, "TOP", 0, -200);
+    MountSpy.PlayerMountNameDisplayFontString = MountSpy.PlayerMountNameDisplayFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge");
+    MountSpy.PlayerMountNameDisplayFontString:SetPoint("CENTER", MountSpy.PlayerMountNameDisplayFrame, "CENTER", 0, 0);
+    MountSpy.PlayerMountNameDisplayFontString:SetTextColor(1, 0.84, 0); -- Gold color     
 end
