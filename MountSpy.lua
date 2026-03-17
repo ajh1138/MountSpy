@@ -224,8 +224,6 @@ function MountSpy.ReceiveCommand(msg, ...)
         MountSpy.ToggleIgnoreShapeshifts()
     elseif msg == "showonstartup" then
         MountSpy.ToggleAlwaysShowOnStartup()
-    elseif msg == "onmounting" then
-        MountSpy.ToggleDisplayMountNameOnMountEvent()
     elseif msg == "npcs" then
         MountSpy.ToggleIgnoreNpcs();
     elseif string.find(msg, "setwindow ") and string.find(msg, "setwindow ") > 0 then
@@ -245,18 +243,9 @@ function MountSpy_OnEvent(self, eventName, ...)
         MountSpy.OnPlayerTargetChanged()
     end
 
-    if eventName == "PLAYER_MOUNT_DISPLAY_CHANGED" then
-        MountSpy.Debug("mount display changed event fired.");
-        if IsMounted() and MountSpyDisplayMountNameOnMountEvent then
-            MountSpy.Debug("player is mounted.");
-            MountSpy.DisplayPlayerMountName();
-        end
-    end
-
     if eventName == "ADDON_LOADED" and arg1 == "MountSpy" then
         self:RegisterEvent("PLAYER_TARGET_CHANGED")
         self:RegisterEvent("VARIABLES_LOADED")
-        self:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
         MountSpy.Init()
     end
 end
