@@ -1,7 +1,7 @@
-## Interface: 120005,120007
+## Interface: 120007,120100
 ## Title: Mount Spy
 ## Author: ajh1138
-## Version: 12.00.07-01
+## Version: 12.01.00-01
 ## Notes: "Tells you what mount a player is riding and where to get it."
 ## IconTexture: Interface\Icons\inv_misc_head_dragon_01
 ## X-Category: Mounts
